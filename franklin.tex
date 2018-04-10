@@ -290,13 +290,16 @@ $\Pr\{X_i > t_r\}=\Pr\{X_i < t_r\} = 1/2$.
 
    Perform a relabelling of indices so that, for all $j\in\Z$,
    $Y_j=\cw^j_{L_{r-1}}(i)$. Consider the graph $G'$ described above.
-   Define the random variable $M_0$ as follows.  If no component of $G'$
+   Define the random variable $M_0$ as follows:  If no component of $G'$
    contains $i$ (because $X_i=Y_0<t_r$) then define $M_0=0$.  Otherwise,
    let $C_0$ be the component of $G'$ that contains $i$ and let $M_0$
    be the number of vertices in $C_0$.
 
    First note that $\Pr\{M_0=0\}=\Pr\{X_i<t_r\}=1/2$.
-   For $m \in \N$, $\Pr\{M_0=m\} = i/2^{m+2}$
+   For $m \in \N$, 
+   \[
+       \Pr\{M_0=m\} = m/2^{m+2}
+   \]
    since $M_0=m$ precisely if there exists a $k\in\{0,\ldots,m-1\}$
    such that $Y_{-k-1}< t_r$, $Y_{-k+i}<t_r$ and $Y_j \ge t_r$ for all
    $j\in\{-k,\ldots,-k+m-1\}$.  Now we have,
