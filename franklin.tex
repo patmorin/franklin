@@ -208,11 +208,12 @@ Notice that for any $r\ge 0$, the set $A_r=F^r_X(\Z)$ is $X$-safe.
 With these definitions, the probabilities are are interested in are,
 for some fixed $i$, $\Pr\{i\in A_r\}$ for some $r\in\N$.
 
-\section{The Lower Bound}
+\section{Lower Bounds}
 
-To obtain the lower bound $p_r \ge 1/4^r$, we describe a thresholded
-version of the Franklin function, $F_t$ that produces a subset of the
-set $F$ produced by the Franklin function.  
+We begin by proving the lower bound $p_r \ge 1/4^r$ by describing a
+thresholded version of the Franklin function, $F_t$ that produces a
+subset of the set $F$ produced by the Franklin function. $F_t$ is a
+combination of two kinds of operations: thresholding and max-partitioning.
 
 \paragraph{Thresholding:}
 Let $L\subseteq\Z$ be an $X$-safe set.  Observe that, for any real
@@ -275,7 +276,7 @@ define $F_{t_1,\ldots,t_r}(L) = F_{t_r}(F_{t_{r-1}}(\cdots(F_{t_1}(\Z))\cdots ))
 To describe our sequence of subsets $(L_r: r\in\N)$, all that remains
 is to describe the sequence of threshold values $(t_r:r\in\N)$ that is
 used to obtain each set $L_r = F_{t_1,\ldots,t_r}(\Z)$.  Define the
-set $L_0=\Z$.  By assumption, we know that $\langle X_i:i\in L_0\langle$ is iud
+set $L_0=\Z$.  By assumption, we know that $\langle X_i:i\in L_0\rangle$ is iud
 over $[0,1]$.  For $r\ge 1$, \lemref{lower-iid} implies that $\langle X_i:i\in
 L_{r-1}\rangle$ is iid over some distribution $\mathcal{D}_{r-1}$ and we take
 $t_r$ to be the median of $\mathcal{D}_{r-1}$ so that, for $i\in L_{r-1}$,
@@ -290,8 +291,8 @@ $\Pr\{X_i > t_r\}=\Pr\{X_i < t_r\} = 1/2$.
    since \[ \Pr\{i\in L_r\} = \prod_{k=1}^r \Pr\{i\in L_k\mid i\in L_{k-1}\} .\]
 
    Perform a relabelling of indices so that, for all $j\in\Z$,
-   $Y_j=\cw^j_{L_{r-1}}(i)$. Consider the graph $G'$ described above.
-   Define the random variable $M_0$ as follows:  If no component of $G'$
+   $Y_j=\cw^j_{L_{r-1}}(i)$. Consider the graph $G'$ described above and
+   define the random variable $M_0$ as follows:  If no component of $G'$
    contains $i$ (because $X_i=Y_0<t_r$) then define $M_0=0$.  Otherwise,
    let $C_0$ be the component of $G'$ that contains $i$ and let $M_0$
    be the number of vertices in $C_0$.
@@ -330,7 +331,7 @@ from the previous section.
 Let $L$ be an $X$-safe set such that $\langle X_i: i\in L\rangle$ is iid where
 each element has distribution $\mathcal{D}$.  Again, let $G=(L,E)$ be the
 graph with vertex set $L$ and edge set $E=\{(i,\cw_L(i)): i\in L\}$.
-Fix a value $0<p<1$ and let $t$ be chosen so that, for each $i\in L$,
+Fix a value $0<p<1$ and let $t=t(\mathcal{D},p)$ be chosen so that, for each $i\in L$,
 $\Pr\{X_i\ge t\} = p$.  Consider the graph $G_{\ge t}$ induced the
 elements in $L_{\ge t}$ and consider the graph $G_{<t}$ induced by the
 elements in $L\setminus L_{\ge t}$.
@@ -347,12 +348,55 @@ $\hat{C}_t$ over all components $C$ in $G_{<t}$.
 Let $Q_t(L)= F_t(L)\cup \hat{F}_t(L)$. It is straightforward to verify
 that $Q_t(L)$ is $X$-safe.  However, the sequence $\langle X_i: i\in
 Q_t(L)\rangle$ is certainly not iid.  Indeed, elements of $\hat{F}_t(L)$
-are more likely to be clustered together in this sequence.
-In the next two lemmas, we show that, by giving up this iid property we get a larger subset of $L$ and that by interleaving 
+are more likely to be clustered together in this sequence.  In the next
+two lemmas, we show that, by giving up this iid property we get a larger
+subset of $L$ and that by interleaving the functions $Q_t$ and $F_t$
+we again obtain an iid sequence.
+
+\begin{lem}\lemlabel{magic}
+   Let $p=5/2-\sqrt{21/4}$, let $t^*$ be chosen so that $\Pr\{X\ge t^*\}=p$, 
+   and let
+   \[  c^*=4\sqrt{21}-18\approx0.330302779823 \enspace . \]
+   Then, 
+   \[  \Pr\{i\in Q_{t^*}(L)\} = c^* = 2\Pr\{i\in F_{t^*}(L)\}=2\Pr\{i\in \hat{F}_{t^*}(L)\} \enspace .
+   \]
+\end{lem}
+
+\begin{proof}
+  First note that $\Pr\{i\in Q_t(L)\}=\Pr\{i\in F_t(L)\} + \Pr\{i\in
+  \hat{F}_t(L)\}$, so it suffices to show that $\Pr\{i\in F_t(L)\} =
+  \Pr\{i\in \hat{F}_t(L)\}=c^*/2$.  Repeating the calculation in the
+  proof of \lemref{lower-bound}, we find that
+  \[
+      \Pr\{i\in F_{t^*}(L)\} = \sum_{m=1}^\infty p^m (1-p)^2 = p-p^2 = 2\sqrt{21}/9 \enspace .
+  \]
+  The calculation for $\hat{F}_{t*}$ is similar except that now, if $i$
+  appears in a component $C$ of $G_{<t^*}$ of size $m\ge 3$, it has
+  probability $(m-2)/3$ of taking part in $\hat{C}_{t^*}$.  This yields
+  \[
+     \Pr\{i\in \hat{F}_{t^*}(L)\} = \sum_{m=3}^\infty (1-p)^mp^2(m-2)/3
+     = -p^3/3 + p^2 - p + 1/3 = 2\sqrt{21}/9 \enspace . \qedhere
+  \]
+\end{proof}
+
 
 \begin{lem}
-
+   Let $p$, $t^*$, and $c^*$ be defined as in \lemref{magic}.  Then,
+   for any $i\in L$, $\Pr\{i\in F_{t^*}(G_{t^*}(L))\} = c^*/4$ and the
+   sequence $\langle X_i:i\in F_{t^*}(G_{t^*}(L))\rangle$ is iid.
 \end{lem}
+
+\begin{proof}
+   By \lemref{magic} we know that $\Pr\{i\in G_{t^*}(L)\}=c^*$. Let
+   $\mathcal{D}$ be the distribution of $X_i$ conditioned on $i$ being
+   in $G_{t^*}(L)$.  Again, by \lemref{magic} we see that $t^*$ is the
+   median of $\mathcal{D}$.  To be continued....
+\end{proof}
+
+
+\begin{thm}
+   $p_r\ge a^r$ for $a=\sqrt{\sqrt{21}-9/2}\approx 0.287359870121$
+\end{thm}
 
 
 
