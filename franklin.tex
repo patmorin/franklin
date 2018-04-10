@@ -116,8 +116,11 @@ This is somewhat surprising and suggests that the Franklin leader election algor
 
 For a set $S\subseteq\Z$ and any $i\in\Z$, define $\ccw_S(i) =
 i-\min\{j\in\N: i-j\in S\}$ and $\cw_S(i) = i+\min\{j\in\N: i+j\in S\}$.
-We define $\cw_S^0(i)=\ccw_S^0(i)=i$ and, for $k\in\N$ $\cw_S^k(i) = \cw_S(\cw_S^{k-1}(i))$
-and $\cw_S^{-k}(i) = \ccw_S^{-(k-1)}(i)$.
+We define $\cw_S^0(i)=\ccw_S^0(i)=i$ and, for $k\in\N$ $\cw_S^k(i) =
+\cw_S(\cw_S^{k-1}(i))$ and $\cw_S^{-k}(i) = \ccw_S^{-(k-1)}(i)$.
+For a set $S\subseteq\Z$, $\langle X_i: i\in S\rangle$ denotes the
+sequence in which, for each $i\in S$, the value $X_i$ immediately precedes
+the value $X_{\cw_S(i)}$.
 
 To understand Franklin's algorithm as $n\to\infty$, we consider the infinite
 case in which the nodes consist of all integers $i\in \Z$ and the labels are
@@ -159,10 +162,10 @@ Svante's Derivation of $p_2$ can go here.
 \section{Tools for Sequences}
 
 The technical difficulty in studying Franklin's algorithm is that the
-random variables $\{X_i:i\in A_r\}$ are not independent.  In order to
+random variables $\langle X_i:i\in A_r\rangle$ are not independent.  In order to
 address this difficulty, we study different sets, $L_r\subseteq
-A_r\subseteq U_r$ that have the property that the sets $\{X_i:i\in L_r\}$
-and $\{X_i:i\in U_r\}$ are each independent sets of random variables, which
+A_r\subseteq U_r$ that have the property that the sets $\langle X_i:i\in L_r\rangle$
+and $\langle X_i:i\in U_r\rangle$ are each independent sets of random variables, which
 makes them easier to study. In this way we obtain upper and lower bounds because
 \[
     \Pr\{i\in L_r\} \le \Pr\{i\in A_r\} \le \Pr\{i\in U_r\} \enspace .
@@ -171,7 +174,7 @@ To make this work, we need some preliminary results on the structure of
 the sets we are working with.
 
 In the following, all subsets of $\Z$ are infinite and have no maximum
-or minimum.  Let $X=\{X_i:i\in \Z\}$ be a set of distinct numbers indexed
+or minimum.  Let $X=\langle X_i:i\in \Z\rangle$ be a set of distinct numbers indexed
 by integers.  We say that a subset $S\subseteq\Z$ is \emph{$X$-safe}
 if, for every $i\in S$ and
 \[
@@ -262,9 +265,7 @@ define $F_{t_1,\ldots,t_r}(L) = F_{t_r}(F_{t_{r-1}}(\cdots(F_{t_1}(\Z))\cdots ))
 \end{proof}
 
 \begin{lem}\lemlabel{lower-iid}
-   Let $L$ be an $X$-safe set such that the random variables $\{X_i:i\in
-   L\}$ are iid.  Then, for any $t$, the random variables $\{X_i: i\in
-   F_t(L)\}$ are iid.
+   Let $L$ be an $X$-safe set such that $\langle X_i:i\in L\rangle$ is iid.  Then, for any $t$, the sequence $\langle X_i: i\in F_t(L)\rangle$ is iid.
 \end{lem}
 
 \begin{proof}
@@ -274,9 +275,9 @@ define $F_{t_1,\ldots,t_r}(L) = F_{t_r}(F_{t_{r-1}}(\cdots(F_{t_1}(\Z))\cdots ))
 To describe our sequence of subsets $(L_r: r\in\N)$, all that remains
 is to describe the sequence of threshold values $(t_r:r\in\N)$ that is
 used to obtain each set $L_r = F_{t_1,\ldots,t_r}(\Z)$.  Define the
-set $L_0=\Z$.  By assumption, we know that $\{X_i:i\in L_0\}$ is iud
-over $[0,1]$.  For $r\ge 1$, \lemref{lower-iid} implies that $\{X_i:i\in
-L_{r-1}\}$ is iid over some distribution $\mathcal{D}_{r-1}$ and we take
+set $L_0=\Z$.  By assumption, we know that $\langle X_i:i\in L_0\langle$ is iud
+over $[0,1]$.  For $r\ge 1$, \lemref{lower-iid} implies that $\langle X_i:i\in
+L_{r-1}\rangle$ is iid over some distribution $\mathcal{D}_{r-1}$ and we take
 $t_r$ to be the median of $\mathcal{D}_{r-1}$ so that, for $i\in L_{r-1}$,
 $\Pr\{X_i > t_r\}=\Pr\{X_i < t_r\} = 1/2$.
 
@@ -319,6 +320,41 @@ A_r\} \ge \Pr\{i\in L_r\}=1/4$ and we immediately obtain our lower bound:
 \begin{cor}
    $p_r \ge 1/4^r$.
 \end{cor}
+
+
+\section{A Sharper Lower Bound}
+
+Next we derive a sharper lower bound using refinements of ideas
+from the previous section.
+
+Let $L$ be an $X$-safe set such that $\langle X_i: i\in L\rangle$ is iid where
+each element has distribution $\mathcal{D}$.  Again, let $G=(L,E)$ be the
+graph with vertex set $L$ and edge set $E=\{(i,\cw_L(i)): i\in L\}$.
+Fix a value $0<p<1$ and let $t$ be chosen so that, for each $i\in L$,
+$\Pr\{X_i\ge t\} = p$.  Consider the graph $G_{\ge t}$ induced the
+elements in $L_{\ge t}$ and consider the graph $G_{<t}$ induced by the
+elements in $L\setminus L_{\ge t}$.
+
+Now, each component $C$ of $G_{<t}$ is a path $v_1,\ldots,v_k$.  For each
+such component, we take the set 
+\[ 
+    \hat{C}_t=\{v_j : j\in\{2,\ldots,k-1\},\, X_{v_j}=\max\{X_{v_{j-1}},X_{v_j},X_{v_{j+1}}\}\} \enspace .
+\]
+That is, $\hat{C}$ are the indices of the internal local maxima in the
+sequence $X_{v_1},\ldots,X_{v_k}$.  Let $\hat{F}_t(L)$ be the union of
+$\hat{C}_t$ over all components $C$ in $G_{<t}$.
+
+Let $Q_t(L)= F_t(L)\cup \hat{F}_t(L)$. It is straightforward to verify
+that $Q_t(L)$ is $X$-safe.  However, the sequence $\langle X_i: i\in
+Q_t(L)\rangle$ is certainly not iid.  Indeed, elements of $\hat{F}_t(L)$
+are more likely to be clustered together in this sequence.
+In the next two lemmas, we show that, by giving up this iid property we get a larger subset of $L$ and that by interleaving 
+
+\begin{lem}
+
+\end{lem}
+
+
 
 
 \section{The Upper Bound}
