@@ -14,11 +14,11 @@ urlcolor=linkblue}
 \usepackage{wasysym}
 
 \DeclareMathOperator*{\argmax}{arg\,max}
-\DeclareMathOperator{\cw}{cw}
-\DeclareMathOperator{\ccw}{ccw}
+\DeclareMathOperator{\cw}{succ}
+\DeclareMathOperator{\ccw}{pred}
 
 \title{\MakeUppercase{Notes and Questions on the Expected Performance 
-   of the Franklin Leader Election Algorithm}%
+   of Franklin's Leader Election Algorithm}%
    \thanks{This work was partly funded by NSERC and the Ontario Ministry of
     Research, Innovation and Science}}
 
@@ -103,7 +103,7 @@ is $n/3$.
 
 Unfortunately, this argument fails in subsequent rounds because,
 after the first round, the labels of active nodes are no longer
-independent. Furthermore, a careful calculation (see \secref{X}) shows
+independent. Furthermore, a careful calculation (see \secref{p2}) shows
 that the probability that a particular node $i$ remains active after 2
 rounds approaches
 \[
@@ -115,23 +115,25 @@ This is somewhat surprising and suggests that the Franklin leader election algor
 \subsection{The Model and Results}
 
 For a set $S\subseteq\Z$ and any $i\in\Z$, define $\ccw_S(i) =
-\min\{j\in\N: i-j\in S\}$ and $\cw_S(i) = \min\{j\in\N: i+j\in S\}$.
-Sometimes we will work with sets $S$ of integers modulo $n$, in which
-case we use the same definitions using arithmetic modulo $n$.
+i-\min\{j\in\N: i-j\in S\}$ and $\cw_S(i) = i+\min\{j\in\N: i+j\in S\}$.
+We define $\cw_S^0(i)=\ccw_S^0(i)=i$ and, for $k\in\N$ $\cw_S^k(i) = \cw_S(\cw_S^{k-1}(i))$
+and $\cw_S^{-k}(i) = \ccw_S^{-(k-1)}(i)$.
 
-To understand this process as $n\to\infty$, we consider the infinite
+To understand Franklin's algorithm as $n\to\infty$, we consider the infinite
 case in which the nodes consist of all integers $i\in \Z$ and the labels are
 independent uniform random variables $X_i\in[0,1]$, for all $i\in\Z$.
 
-The initial set $A_0$ of active nodes is defined to be $A_0=\Z$ and, at round $r\ge 1$ we determine the set $A_r$ of active nodes after round $r$ as 
+The initial set $A_0$ of active nodes is defined to be $A_0=\Z$ and, at round $r\ge 1$, we determine the set $A_r$ of active nodes after round $r$ as 
 \[
-    A_r = \{i \in A_{r-1} : i > \max\{X_{\ccw_{A_{r-1}}(i)},
+    A_r = \{i \in A_{r-1} : i = \max\{X_{\ccw_{A_{r-1}}(i)},X_i,
                                       X_{\cw_{A_{r-1}}(i)}\} \} 
 \] 
-We study the probability $p_r$ that $0\in A_r$.  Intuitively, one would
-expect that $p_r=1/3^r$, but the we know that this is not even true for
-$r=2$.  Relaxing this, we might hope to prove that $\lim_{r\to\infty}
-p_r^{1/r} = c$ for some $c$ close to $1/3$.  However, \emph{apriori}, it is not obvious that this limit exists and, if it does, it may be $1/2$ or $0$.
+We study the probability $p_r$ that, for some particular $i\in\Z$,
+$i\in A_r$.  Intuitively, one would expect that $p_r=1/3^r$, but the
+we know that this is not even true for $r=2$.  Relaxing this, we might
+hope to prove that $\lim_{r\to\infty} p_r^{1/r} = c$ for some $c$ close
+to $1/3$.  However, \emph{apriori}, it is not obvious that this limit
+exists and, if it does, it may be as large as $1/2$ or as small as $0$.
 
 Here we establish the following upper and lower bounds on $p_r$:
 
@@ -149,6 +151,11 @@ rounds is at most $\log_{1/B} n + o(\log n)$ and at least $\log_{1/A}
 n- o(\log n)$.  In particular, these results rule out the possibility
 that the expected number of rounds is $o(\log n)$.
 
+\section{Derivation of $p_2$}
+\seclabel{p2}
+
+Svante's Derivation of $p_2$ can go here.
+
 \section{Tools for Sequences}
 
 The technical difficulty in studying Franklin's algorithm is that the
@@ -163,89 +170,94 @@ makes them easier to study. In this way we obtain upper and lower bounds because
 To make this work, we need some preliminary results on the structure of
 the sets we are working with.
 
-Let $X=\{X_i:i\in \Z\}$ be a set of distinct numbers indexed by integers.
-We say that a subset $S\subseteq\Z$
-is \emph{$X$-safe} if, for every $i\in S$ and $k= \cw_{S}(i)$:
+In the following, all subsets of $\Z$ are infinite and have no maximum
+or minimum.  Let $X=\{X_i:i\in \Z\}$ be a set of distinct numbers indexed
+by integers.  We say that a subset $S\subseteq\Z$ is \emph{$X$-safe}
+if, for every $i\in S$ and
 \[
-    \max\{X_i,X_k\} \ge \max\{X_m: m\in \{i,\ldots,k\}\}
+    \max\{X_i,\cw_S(i)\} = \max\{X_m: m\in \{i,\ldots,\cw_S(i)\}\} \enspace .
 \]
 
 \begin{lem}\lemlabel{domination}
    Let $L\subseteq U\subseteq\Z$ be sets of integers where $L$
-   is $X$-safe.  If $i\in L\cap U$, $j=\cw_{U}(i)$ with $X_j > X_i$,
-   then for $k=\cw_{L}(i)$,
+   is $X$-safe.  If $i\in L\cap U$ and $X_{\cw_U(i)} > X_i$, then
    \[
-         X_k \ge X_j \enspace . 
+         X_{\cw_L(i)}\ \ge X_{\cw_U(i)} \enspace . 
    \]
    (And the same result holds if we replace all occurrences of $\cw$
    with $\ccw$.)
 \end{lem}
 
 \begin{proof}
+   Let $j = \cw_U(i)$ and $k=\cw_L(i)$, so $i < j \le k$.
    Since $L\subset U$, $j\in \{i,\ldots,k\}$.  Since $L$ is $X$-safe,
    $\max\{X_i,X_k\} \ge \max\{X_i,\ldots,X_k\} \ge X_j$.  Now we have
    that $\max\{X_i,X_k\} \ge X_j$, but $X_i < X_j$, so it must be that
    $X_k\ge X_j$.
 \end{proof}
 
-For any set $A\subset\Z$ and $X=\{X_i:i\in \Z\}$, define the \emph{Franklin function}
+For any set $A\subset\Z$ and $X=\{X_i:i\in \Z\}$, define the
+\emph{Franklin function}
 \[
-   F_X(A) = \{ i\in A : X_{i} > \max\{X_{\cw_A(i)},X_{\ccw_A(i)}\} \}
+   F_X(A) = \{ i\in A : X_{i} = \max\{X_{\cw_A(i)},X_i,X_{\ccw_A(i)}\} \}
 \]
-Notice that for any $r\ge 0$, $F^r_X(\Z)$ is $X$-safe.
-
-\section{The Upper Bound}
-
-For $S\subseteq\Z$ a \emph{blocking} of $S$ is a partition $B$ of $S$
-into sets of sizes 1 and 2 with the property that, if $\{i,j\}\in B$, then
-$j\in\{\cw_S(i),\ccw_S(i)\}$.  We define $S[B] = \{\min P : P\in B\}$.  
+Notice that for any $r\ge 0$, the set $A_r=F^r_X(\Z)$ is $X$-safe.
+With these definitions, the probabilities are are interested in are,
+for some fixed $i$, $\Pr\{i\in A_r\}$ for some $r\in\N$.
 
 \section{The Lower Bound}
 
 To obtain the lower bound $p_r \ge 1/4^r$, we describe a thresholded
-version of the Franklin function that produces a subset of the set
-produced by the Franklin function.  Let $L\subseteq\Z$ be an $X$-safe set.
+version of the Franklin function, $F_t$ that produces a subset of the
+set $F$ produced by the Franklin function.  
 
-Observe that, for any real value $t$, the \emph{threshold set}
-$T_t(L)=\{i:X_i> t\}$ is also an $X$-safe set.  
+\paragraph{Thresholding:}
+Let $L\subseteq\Z$ be an $X$-safe set.  Observe that, for any real
+value $t$, the \emph{threshold set} $L_{\ge t}=\{i:X_i\ge t\}$ is also an
+$X$-safe set. Indeed, for any $i\in L_{\ge t}$, $\max\{X_i,X_{\cw_{L_{\ge t}}(i)}\} = \max\{i,\ldots,\cw{L_{\ge t}}(i)\}$ since $X_i\ge t$, $X_{\cw_{L_{\ge t}}(i)}\ge t$ and $X_{i+1},\ldots,X_{\cw_{L_{\ge t}}(i)-1}$ are all less than $t$.
 
+\paragraph{Max-Partitioning:}
 Let $P$ be any partition of $L$ with the property that, for each $I\in
 P$, if $i,j,k\in L$ with $i < k$ and $i,k\in I$, then $j\in I$. Then it
 is straightforward to verify that the set
 \[
-     P(L) = \bigcup_{I\in P} \argmax_{i\in I}(X_i)
+     L_{P} = \bigcup_{I\in P} \argmax_{i\in I}(X_i)
 \]
-is also an $X$-safe set.
+is also an $X$-safe set. Indeed, for any $i\in L_{P}$, there exists a $j\in\{i,\ldots,\cw{L_P}(i)-1\}$ such that $X_i=\max\{X_i,\ldots,X_j\}$ and $X_{\cw{L_P}(i)}=\max\{X_{j+1},\ldots,X_{\cw_{L_P}(i)}\}$
 
-Consider the graph $G=(L,E)$ where $E=\{(i,cw(i)): i\in L\}$. Remove
+\paragraph{Thresholded Franklin:}
+Consider the graph $G=(L,E)$ where $E=\{(i,\cw_L(i)): i\in L\}$. Remove
 from $G$ all vertices $i\in L$ such that $X_i < t$ to obtain a graph
 $G'$ that has a set $P$ of connected components.  Now consider the
 \emph{$t$-thresholded Franklin function}
 \[
     F_t(L) = \bigcup_{I\in P} \argmax_{i\in V(I)}(X_i)
 \]
-Note that, for any $t$, $F_t(L)$ is $X$-safe, since it can be written
-as $F_t(L) = P(T_t(L))$.
+Note that, for any $t\in\R$, $F_t(L)$ is $X$-safe, since it can be
+written as $F_t(L) = (L_{\ge t})_P$.
 
-\begin{lem}
-   For any integer $r\ge 0$ and any $t_1,\ldots,t_k$,
-   \[  F_{t_r}(F_{t_{r-1}}(\cdots(F_{t_1}(\Z))\cdots )) \subseteq F^{r}(\Z)   \]
+For any non-negative integer $r$ and any real values $t_1,\ldots,t_r$,
+define $F_{t_1,\ldots,t_r}(L) = F_{t_r}(F_{t_{r-1}}(\cdots(F_{t_1}(\Z))\cdots ))$.
+
+\begin{lem}\lemlabel{lower-domination}
+   For any integer $r\ge 0$ and any $t_1,\ldots,t_r$,
+   \[  F_{t_1,\ldots,t_r}(\Z) \subseteq F^{r}(\Z)   \]
 \end{lem}
 
 \begin{proof}
    Suppose that this is not the case, so that there is some
    minimum value of $r$ and $t_1,\ldots,t_r$ that provides a
-   counterexample.  For $m\in\{k-1,k\}$, let $A_m=F^{m}(\Z)$ and let
-   $L_m=F_{t_m}(\cdots(F_{t_1}(\Z)\cdots)$.  Since $r$ is minimum,
-   $L_{r-1}\subseteq A_{r-1}$ and yet there is some $i\in L_r$ that such
-   that $i\not\in A_r$.
+   counterexample.  For $m\in\{1,\ldots,r\}$, let $A_m=F^{m}(\Z)$ and let
+   $L_m=F_{t_1,\ldots,t_m}(\Z)$.  Since $r$ is minimum, $L_{r-1}\subseteq
+   A_{r-1}$ and yet there is some $i\in L_r$ that such that $i\not\in
+   A_r$.
 
    The fact that $i\not\in A_r$ implies that $X_i
    < \max\{X_{\cw_{A_{r-1}}(i)},X_{\ccw_{A_{r-1}}(i)}\}$.
-   Suppose, without loss of generality that $X_i < X_j$ with $j =
-   \cw_{A_{r-1}}(i)$.  Now, since $i\in L_r$, it must be that $X_i
-   \ge X_k$, where $k=\cw_{L_{r-1}}(i)$.  But, since $L_{r-1}$ is
-   $X$-safe, this contradicts \lemref{dominator} and the assumption that
+   Suppose, without loss of generality, that $X_i < X_{\cw{A_{r-1}}(i)}$.
+   Now, since $i\in L_r$, it must be that $X_i
+   \ge X_{\cw{L_{r-1}}(i)}$.  But, since $L_{r-1}$ is
+   $X$-safe, this contradicts \lemref{domination} and the assumption that
    $L_{r-1}\subseteq A_{r-1}$.
 \end{proof}
 
@@ -259,48 +271,61 @@ as $F_t(L) = P(T_t(L))$.
    What to say here?
 \end{proof}
 
-Now all that remains is to describe the sequence of threshold
-values $t_1,\ldots,\ldots,t_r$ that is used to obtain the set $L_r =
-F_{t_r}(F_{t_{r-1}}(\cdots(F_{t_1}(\Z))\cdots))$.  Define the set $L_0=\Z$.
-By assumption, we know that $\{X_i:i\in L_0\}$ is iid uniformly over
-$[0,1]$.  For $r\ge 1$, \lemref{lower-iid} implies that $\{X_i:i\in
+To describe our sequence of subsets $(L_r: r\in\N)$, all that remains
+is to describe the sequence of threshold values $(t_r:r\in\N)$ that is
+used to obtain each set $L_r = F_{t_1,\ldots,t_r}(\Z)$.  Define the
+set $L_0=\Z$.  By assumption, we know that $\{X_i:i\in L_0\}$ is iud
+over $[0,1]$.  For $r\ge 1$, \lemref{lower-iid} implies that $\{X_i:i\in
 L_{r-1}\}$ is iid over some distribution $\mathcal{D}_{r-1}$ and we take
 $t_r$ to be the median of $\mathcal{D}_{r-1}$ so that, for $i\in L_{r-1}$,
 $\Pr\{X_i > t_r\}=\Pr\{X_i < t_r\} = 1/2$.
 
-\begin{lem}
-   For any $i\in\Z$, $\Pr\{i\in L_r\} = 1/4^r$.
+\begin{lem}\lemlabel{lower-bound}
+   For any $i\in\Z$ and any $r\in\N$, $\Pr\{i\in L_r\} = 1/4^r$.
 \end{lem}
 
 \begin{proof}
-   It suffices to prove that $\Pr\{i\in L_r \mid i\in L_{r-1}\} = 1/4$.  
+   It suffices to prove that $\Pr\{i\in L_r \mid i\in L_{r-1}\} = 1/4$
+   since \[ \Pr\{i\in L_r\} = \prod_{k=1}^r \Pr\{i\in L_k\mid i\in L_{k-1}\} .\]
 
    Perform a relabelling of indices so that, for all $j\in\Z$,
-   $Y_j=\cw^j_{L_{r-1}}(i)$.  Consider the graph $G'$ described above,
-   and consider the component, $C_0$, of this graph that contains
-   $i$ (if any) and let $M_0$ be the number of vertices in $C_0$.
-   With probability $1/2$, $X_i=Y_0 < t_r$, so no such component $C_0$
-   exists, in which case we define $M_0=0$.
+   $Y_j=\cw^j_{L_{r-1}}(i)$. Consider the graph $G'$ described above.
+   Define the random variable $M_0$ as follows.  If no component of $G'$
+   contains $i$ (because $X_i=Y_0<t_r$) then define $M_0=0$.  Otherwise,
+   let $C_0$ be the component of $G'$ that contains $i$ and let $M_0$
+   be the number of vertices in $C_0$.
 
+   First note that $\Pr\{M_0=0\}=\Pr\{X_i<t_r\}=1/2$.
    For $m \in \N$, $\Pr\{M_0=m\} = i/2^{m+2}$
    since $M_0=m$ precisely if there exists a $k\in\{0,\ldots,m-1\}$
-   such that $Y_{-k-1}< t_r$, $Y_{-k+i}<t_r$ and $Y_j > t_r$ for all
+   such that $Y_{-k-1}< t_r$, $Y_{-k+i}<t_r$ and $Y_j \ge t_r$ for all
    $j\in\{-k,\ldots,-k+m-1\}$.  Now we have,
    \begin{align*}
       \Pr\{i\in L_r\mid i\in L_{r-1}\} 
-          & = \Pr\{Y_0=\max\{Y_i:i\in C_0\}\} \\
-          & = \sum_{m=1}^\infty \Pr\{Y_0=\max\{Y_i:i\in C_0\mid M_0=i\}\}\Pr\{M_0=m\} \\ 
+          & = \Pr\{\mbox{$M_0>0$ and $X_i=\max\{X_j:j\in C_0\}$}\} \\
+          & = \sum_{m=1}^\infty \Pr\{X_i=\max\{X_j:j\in C_0\}\mid M_0=m\}\Pr\{M_0=m\} \\ 
           & = \sum_{m=1}^\infty (1/i)\Pr\{M_0=m\} \\
           & = \sum_{m=1}^\infty 1/2^{m+2} \\
           & = 1/4 \enspace . \qedhere
    \end{align*}
 \end{proof}
 
-Since $L_r\subseteq A_r$, we immediately obtain our lower bound:
+
+Now, by \lemref{lower-domination} and \lemref{lower-bound}, $p_r=\Pr\{i\in
+A_r\} \ge \Pr\{i\in L_r\}=1/4$ and we immediately obtain our lower bound:
 \begin{cor}
    $p_r \ge 1/4^r$.
 \end{cor}
 
+
+\section{The Upper Bound}
+
+For $S\subseteq\Z$ a \emph{blocking} of $S$ is a partition $B$ of $S$
+into sets of sizes 1 and 2 with the property that, if $\{i,j\}\in B$, then
+$j\in\{\cw_S(i),\ccw_S(i)\}$.  We define $S[B] = \{\min P : P\in B\}$.  
+
+
+\section{Remarks}
 
 \bibliographystyle{plainurl}
 \bibliography{anagram}
