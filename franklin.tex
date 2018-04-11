@@ -347,57 +347,99 @@ $\hat{C}_t$ over all components $C$ in $G_{<t}$.
 
 Let $Q_t(L)= F_t(L)\cup \hat{F}_t(L)$. It is straightforward to verify
 that $Q_t(L)$ is $X$-safe.  However, the sequence $\langle X_i: i\in
-Q_t(L)\rangle$ is certainly not iid.  Indeed, elements of $\hat{F}_t(L)$
-are more likely to be clustered together in this sequence.  In the next
-two lemmas, we show that, by giving up this iid property we get a larger
-subset of $L$ and that by interleaving the functions $Q_t$ and $F_t$
-we again obtain an iid sequence.
+Q_t(L)\rangle$ is certainly not iid.  
 
-\begin{lem}\lemlabel{magic}
-   Let $p=5/2-\sqrt{21/4}$, let $t^*$ be chosen so that $\Pr\{X\ge t^*\}=p$, 
-   and let
-   \[  c^*=4\sqrt{21}-18\approx0.330302779823 \enspace . \]
-   Then, 
-   \[  \Pr\{i\in Q_{t^*}(L)\} = c^* = 2\Pr\{i\in F_{t^*}(L)\}=2\Pr\{i\in \hat{F}_{t^*}(L)\} \enspace .
-   \]
+\begin{lem}\lemlabel{empty-lake}
+  Select $t$ so that $\Pr\{X_i\ge t\}=p$.  Then,
+  for any $i\in F_t(L)$, 
+  \[
+    \Pr\{\cw_{Q_t(L)}(i) = \cw_{F_t(L)}(i)\} =  
+      1-\sum_{m=3}^\infty (1-p)^{m-1}p\left(1-\frac{2^{m-1}}{m!}\right)
+  \]
 \end{lem}
 
 \begin{proof}
-  First note that $\Pr\{i\in Q_t(L)\}=\Pr\{i\in F_t(L)\} + \Pr\{i\in
-  \hat{F}_t(L)\}$, so it suffices to show that $\Pr\{i\in F_t(L)\} =
-  \Pr\{i\in \hat{F}_t(L)\}=c^*/2$.  Repeating the calculation in the
-  proof of \lemref{lower-bound}, we find that
-  \[
-      \Pr\{i\in F_{t^*}(L)\} = \sum_{m=1}^\infty p^m (1-p)^2 = p-p^2 = 2\sqrt{21}/9 \enspace .
-  \]
-  The calculation for $\hat{F}_{t*}$ is similar except that now, if $i$
-  appears in a component $C$ of $G_{<t^*}$ of size $m\ge 3$, it has
-  probability $(m-2)/3$ of taking part in $\hat{C}_{t^*}$.  This yields
-  \[
-     \Pr\{i\in \hat{F}_{t^*}(L)\} = \sum_{m=3}^\infty (1-p)^mp^2(m-2)/3
-     = -p^3/3 + p^2 - p + 1/3 = 2\sqrt{21}/9 \enspace . \qedhere
-  \]
+   The event we are studying occurs when $\hat{F}_t(L)$ contains
+   no elements in the interval $[i,\cw_{F_t(L)}(i)]$.  Now, we know
+   that there is at least one element $j$ in this interval with $X_j
+   < t$.  Therefore $G_{<t}$ contains a component $C$ whose vertices
+   $v_1,\ldots,v_m$ are in this interval. The component $C$ does not
+   contribute any element to $\hat{F}_t(L)$ if and only if the sequence
+   $X_{v_1},\ldots,X_{v_m}$ has no local maxima except possibly $X_{v_1}$
+   and $X_{v_m}$. 
+
+   Since $X_{v_1},\ldots,X_{v_m}$ is iid, the probability that it contains
+   no local maxima is equal to the number of permutations with no local
+   maxima divided by $m!$.  A straightforward counting argument using
+   the binomial identity $\sum_{k=0}^{m-1}\binom{m-1}{k}=2^{m-1}$ shows
+   that the number of permutations with no local maxima is $2^{m-1}$
+   (see OEIS entry A059204 and references therein, for example \cite{X}).
+
+   Now, the size of the component $C$ (i.e., the value of $m$)
+   is also a random variable whose distribution is given by
+   $\Pr\{|C|=m\}=(1-p)^{m-1}p$.  Letting $\mathcal{E}_C$ denote the event ``$C$  contributes at least one elements to $\hat{F}_t(L)$'', we have
+   \[
+       \Pr\{\mathcal{E}_C\} = \sum_{m=3}^\infty \Pr\{|C|=m\}\Pr\{\mathcal{E}_C\mid |C|=m\} = \sum_{m=3}^\infty (1-p)^{m-1}p\left(1-\frac{2^{m-1}}{m!}\right) \enspace . \qedhere
+   \]
 \end{proof}
 
+Note that, using the identity $\sum_{k=0}^\infty a^k/(k!)=e^a-1$, one can derive a closed form for the probability in \lemref{empty-lake}:
+\[
+q = 
+\newcommand{\Bold}[1]{\mathbf{#1}}\frac{{\left(p e^{2} + {\left(p - 2\right)} e^{2p}\right)} e^{-2p}}{2 \, {\left(p - 1\right)}}
+\]
+(See the accompanying Sage workbook.)
 
 \begin{lem}
-   Let $p$, $t^*$, and $c^*$ be defined as in \lemref{magic}.  Then,
-   for any $i\in L$, $\Pr\{i\in F_{t^*}(G_{t^*}(L))\} = c^*/4$ and the
-   sequence $\langle X_i:i\in F_{t^*}(G_{t^*}(L))\rangle$ is iid.
+  Let $t$ be chosen as in \lemref{empty-lake}. For any $i\in L$, $\Pr\{i\in F_t(Q_t(L))\}= XXX$ and the sequence $\langle X_i:i\in F_t(Q_t(L))\rangle$ is iid.
 \end{lem}
 
-\begin{proof}
-   By \lemref{magic} we know that $\Pr\{i\in G_{t^*}(L)\}=c^*$. Let
-   $\mathcal{D}$ be the distribution of $X_i$ conditioned on $i$ being
-   in $G_{t^*}(L)$.  Again, by \lemref{magic} we see that $t^*$ is the
-   median of $\mathcal{D}$.  To be continued....
-\end{proof}
 
-
-\begin{thm}
-   $p_r\ge a^r$ for $a=\sqrt{\sqrt{21}-9/2}\approx 0.287359870121$
-\end{thm}
-
+%\begin{lem}\lemlabel{magic}
+%   Let $p=5/2-\sqrt{21/4}$, let $t^*$ be chosen so that $\Pr\{X\ge t^*\}=p$, 
+%   and let
+%   \[  c^*=4\sqrt{21}-18\approx0.330302779823 \enspace . \]
+%   Then, 
+%   \[  \Pr\{i\in Q_{t^*}(L)\} = c^* = 2\Pr\{i\in F_{t^*}(L)\}=2\Pr\{i\in \hat{F}_{t^*}(L)\} \enspace .
+%   \]
+%\end{lem}
+%
+%\begin{proof}
+%  First note that $\Pr\{i\in Q_t(L)\}=\Pr\{i\in F_t(L)\} + \Pr\{i\in
+%  \hat{F}_t(L)\}$, so it suffices to show that $\Pr\{i\in F_t(L)\} =
+%  \Pr\{i\in \hat{F}_t(L)\}=c^*/2$.  Repeating the calculation in the
+%  proof of \lemref{lower-bound}, we find that
+%  \[
+%      \Pr\{i\in F_{t^*}(L)\} = \sum_{m=1}^\infty p^m (1-p)^2 = p-p^2 = 2\sqrt{21}/9 \enspace .
+%  \]
+%  The calculation for $\hat{F}_{t*}$ is similar except that now, if $i$
+%  appears in a component $C$ of $G_{<t^*}$ of size $m\ge 3$, it has
+%  probability $(m-2)/3$ of taking part in $\hat{C}_{t^*}$.  This yields
+%  \[
+%     \Pr\{i\in \hat{F}_{t^*}(L)\} = \sum_{m=3}^\infty (1-p)^mp^2(m-2)/3
+%     = -p^3/3 + p^2 - p + 1/3 = 2\sqrt{21}/9 \enspace . \qedhere
+%  \]
+%\end{proof}
+%
+%
+%\begin{lem}
+%   Let $p$, $t^*$, and $c^*$ be defined as in \lemref{magic}.  Then,
+%   for any $i\in L$, $\Pr\{i\in F_{t^*}(G_{t^*}(L))\} = c^*/4$ and the
+%   sequence $\langle X_i:i\in F_{t^*}(G_{t^*}(L))\rangle$ is iid.
+%\end{lem}
+%
+%\begin{proof}
+%   By \lemref{magic} we know that $\Pr\{i\in G_{t^*}(L)\}=c^*$. Let
+%   $\mathcal{D}$ be the distribution of $X_i$ conditioned on $i$ being
+%   in $G_{t^*}(L)$.  Again, by \lemref{magic} we see that $t^*$ is the
+%   median of $\mathcal{D}$.  To be continued....
+%\end{proof}
+%
+%
+%\begin{thm}
+%   $p_r\ge a^r$ for $a=\sqrt{\sqrt{21}-9/2}\approx 0.287359870121$
+%\end{thm}
+%
 
 
 
