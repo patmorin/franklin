@@ -2,6 +2,7 @@
 \listfiles
 \usepackage[utf8]{inputenc}
 \usepackage{microtype}
+\usepackage{kpfonts}
 \usepackage{amsthm,amsmath,amsopn,graphicx}
 \usepackage{pat}
 \usepackage[letterpaper]{hyperref}
@@ -119,7 +120,7 @@ i-\min\{j\in\N: i-j\in S\}$ and $\cw_S(i) = i+\min\{j\in\N: i+j\in S\}$.
 We define $\cw_S^0(i)=\ccw_S^0(i)=i$ and, for $k\in\N$ $\cw_S^k(i) =
 \cw_S(\cw_S^{k-1}(i))$ and $\cw_S^{-k}(i) = \ccw_S^{-(k-1)}(i)$.
 For a set $S\subseteq\Z$, $\langle X_i: i\in S\rangle$ denotes the
-sequence in which, for each $i\in S$, the value $X_i$ immediately precedes
+(doubly infinite) sequence in which, for each $i\in S$, the value $X_i$ immediately precedes
 the value $X_{\cw_S(i)}$.
 
 To understand Franklin's algorithm as $n\to\infty$, we consider the infinite
@@ -128,7 +129,7 @@ independent uniform random variables $X_i\in[0,1]$, for all $i\in\Z$.
 
 The initial set $A_0$ of active nodes is defined to be $A_0=\Z$ and, at round $r\ge 1$, we determine the set $A_r$ of active nodes after round $r$ as 
 \[
-    A_r = \{i \in A_{r-1} : i = \max\{X_{\ccw_{A_{r-1}}(i)},X_i,
+    A_r = \{i \in A_{r-1} : X_i = \max\{X_{\ccw_{A_{r-1}}(i)},X_i,
                                       X_{\cw_{A_{r-1}}(i)}\} \} 
 \] 
 We study the probability $p_r$ that, for some particular $i\in\Z$,
@@ -161,25 +162,35 @@ Svante's Derivation of $p_2$ can go here.
 
 \section{Tools for Sequences}
 
-The technical difficulty in studying Franklin's algorithm is that the
-random variables $\langle X_i:i\in A_r\rangle$ are not independent.  In order to
-address this difficulty, we study different sets, $L_r\subseteq
-A_r\subseteq U_r$ that have the property that the sets $\langle X_i:i\in L_r\rangle$
-and $\langle X_i:i\in U_r\rangle$ are each independent sets of random variables, which
-makes them easier to study. In this way we obtain upper and lower bounds because
+The technical difficulty in studying Franklin's algorithm is that, for
+$r>1$, the sequence $\langle X_i:i\in A_r\rangle$ is not iid.  In order
+to address this difficulty, we study different sets, $L_r\subseteq
+A_r\subseteq U_r$ that have the property that the sequences $\langle X_i:i\in
+L_r\rangle$ and $\langle X_i:i\in U_r\rangle$ are each independent sets
+of random variables, which makes them easier to study. In this way we
+obtain upper and lower bounds because
 \[
     \Pr\{i\in L_r\} \le \Pr\{i\in A_r\} \le \Pr\{i\in U_r\} \enspace .
 \]
 To make this work, we need some preliminary results on the structure of
-the sets we are working with.
+the sequences we are working with.
 
 In the following, all subsets of $\Z$ are infinite and have no maximum
-or minimum.  Let $X=\langle X_i:i\in \Z\rangle$ be a set of distinct numbers indexed
+or minimum.  Let $X=\{X_i:i\in \Z\}$ be a set of distinct numbers indexed
 by integers.  We say that a subset $S\subseteq\Z$ is \emph{$X$-safe}
 if, for every $i\in S$ and
 \[
     \max\{X_i,\cw_S(i)\} = \max\{X_m: m\in \{i,\ldots,\cw_S(i)\}\} \enspace .
 \]
+
+See \figref{domination-i}.
+\begin{figure}
+   \begin{center}
+      \includegraphics{figs/domination-i}
+   \end{center}
+   \caption{Illustration of \lemref{domination}.}
+   \figlabel{domination-i}
+\end{figure}
 
 \begin{lem}\lemlabel{domination}
    Let $L\subseteq U\subseteq\Z$ be sets of integers where $L$
@@ -202,7 +213,7 @@ if, for every $i\in S$ and
 For any set $A\subset\Z$ and $X=\{X_i:i\in \Z\}$, define the
 \emph{Franklin function}
 \[
-   F_X(A) = \{ i\in A : X_{i} = \max\{X_{\cw_A(i)},X_i,X_{\ccw_A(i)}\} \}
+   F(A) = \{ i\in A : X_{i} = \max\{X_{\cw_A(i)},X_i,X_{\ccw_A(i)}\} \}
 \]
 Notice that for any $r\ge 0$, the set $A_r=F^r_X(\Z)$ is $X$-safe.
 With these definitions, the probabilities are are interested in are,
@@ -210,38 +221,48 @@ for some fixed $i$, $\Pr\{i\in A_r\}$ for some $r\in\N$.
 
 \section{Lower Bounds}
 
-We begin by proving the lower bound $p_r \ge 1/4^r$ by describing a
+In this section we prove lower bounds on $p_r$. We begin with a relatively simple argument that shows $p_r \ge 1/4^r$.  
+
+\subsection{A First Attempt: Mountain Peaks}
+
+To prove that $p_r \ge 1/4^r$ we study a
 thresholded version of the Franklin function, $F_t$ that produces a
 subset of the set $F$ produced by the Franklin function. $F_t$ is a
-combination of two kinds of operations: thresholding and max-partitioning.
+combination of two kinds of operations: \emph{thresholding} and \emph{max-partitioning}.
 
 \paragraph{Thresholding:}
 Let $L\subseteq\Z$ be an $X$-safe set.  Observe that, for any real
 value $t$, the \emph{threshold set} $L_{\ge t}=\{i:X_i\ge t\}$ is also an
-$X$-safe set. Indeed, for any $i\in L_{\ge t}$, $\max\{X_i,X_{\cw_{L_{\ge t}}(i)}\} = \max\{i,\ldots,\cw{L_{\ge t}}(i)\}$ since $X_i\ge t$, $X_{\cw_{L_{\ge t}}(i)}\ge t$ and $X_{i+1},\ldots,X_{\cw_{L_{\ge t}}(i)-1}$ are all less than $t$.
+$X$-safe set. Indeed, for any $i\in L_{\ge t}$, $\max\{X_i,X_{\cw_{L_{\ge t}}(i)}\} = \max\{X_i,\ldots,X_{\cw{L_{\ge t}}(i)}\}$ since $X_i\ge t$, $X_{\cw_{L_{\ge t}}(i)}\ge t$ and $X_{i+1},\ldots,X_{\cw_{L_{\ge t}}(i)-1}$ are all less than $t$.
 
 \paragraph{Max-Partitioning:}
 Let $P$ be any partition of $L$ with the property that, for each $I\in
 P$, if $i,j,k\in L$ with $i < k$ and $i,k\in I$, then $j\in I$. Then it
 is straightforward to verify that the set
 \[
-     L_{P} = \bigcup_{I\in P} \argmax_{i\in I}(X_i)
+     L_{P} = \bigcup_{M\in P} \argmax_{i\in M}(X_i)
 \]
 is also an $X$-safe set. Indeed, for any $i\in L_{P}$, there exists a $j\in\{i,\ldots,\cw{L_P}(i)-1\}$ such that $X_i=\max\{X_i,\ldots,X_j\}$ and $X_{\cw{L_P}(i)}=\max\{X_{j+1},\ldots,X_{\cw_{L_P}(i)}\}$
 
 \paragraph{Thresholded Franklin:}
 Consider the graph $G=(L,E)$ where $E=\{(i,\cw_L(i)): i\in L\}$. Remove
 from $G$ all vertices $i\in L$ such that $X_i < t$ to obtain a graph
-$G'$ that has a set $P$ of connected components.  Now consider the
+$G_{\ge t}$ that has a set $P$ of connected components.  We call each
+connected component of $G_{\ge t}$ a \emph{mountain}.  Now consider the
 \emph{$t$-thresholded Franklin function}
 \[
-    F_t(L) = \bigcup_{I\in P} \argmax_{i\in V(I)}(X_i)
+    F_t(L) = \bigcup_{M\in P} \argmax_{i\in V(M)}(X_i) \enspace ,
 \]
+which keeps the highest \emph{peak} in each mountain.
 Note that, for any $t\in\R$, $F_t(L)$ is $X$-safe, since it can be
 written as $F_t(L) = (L_{\ge t})_P$.
 
-For any non-negative integer $r$ and any real values $t_1,\ldots,t_r$,
-define $F_{t_1,\ldots,t_r}(L) = F_{t_r}(F_{t_{r-1}}(\cdots(F_{t_1}(\Z))\cdots ))$.
+We will perform a sequence of thresholded Franlin functions
+beginning with $\Z$.  For any non-negative integer $r$ and any
+real values $t_1,\ldots,t_r$, define $F_{t_1,\ldots,t_r}(L) =
+F_{t_r}(F_{t_{r-1}}(\cdots(F_{t_1}(\Z))\cdots ))$.  The following lemma
+shows that any such sequence $F_{t_1,\ldots,t_r}(\Z)$ can be used to upper
+bound $A_r=F^r(\Z)$
 
 \begin{lem}\lemlabel{lower-domination}
    For any integer $r\ge 0$ and any $t_1,\ldots,t_r$,
@@ -265,12 +286,21 @@ define $F_{t_1,\ldots,t_r}(L) = F_{t_r}(F_{t_{r-1}}(\cdots(F_{t_1}(\Z))\cdots ))
    $L_{r-1}\subseteq A_{r-1}$.
 \end{proof}
 
+Now that we have established that $F^r(\Z)$ contains $F_{t_1,\ldots,t_r
+}(\Z)$, we argue that it is much easier to study the sequence $\langle
+X_i:i\in F_{t_1,\ldots,t_r}(\Z)\rangle$ than the sequence $\langle X_i:
+i\in F^r(\Z)\rangle$.
+
 \begin{lem}\lemlabel{lower-iid}
    Let $L$ be an $X$-safe set such that $\langle X_i:i\in L\rangle$ is iid.  Then, for any $t$, the sequence $\langle X_i: i\in F_t(L)\rangle$ is iid.
 \end{lem}
 
 \begin{proof}
-   What to say here?
+  If $\mathcal{D}$ is the distribution of $X_i$ for each $i\in
+  L$ and $p=\Pr\{X_i\ge t\}$, then each $X_j$ with $j\in F_t(L)$
+  is distributed like $\max\{A_1,\ldots,A_R\}$ where where $R$ is a
+  $\mathrm{geometric}(p)$ random variable and each $A_i$ is an independent
+  random variable with distribution $\mathcal{D}$.
 \end{proof}
 
 To describe our sequence of subsets $(L_r: r\in\N)$, all that remains
@@ -291,11 +321,11 @@ $\Pr\{X_i > t_r\}=\Pr\{X_i < t_r\} = 1/2$.
    since \[ \Pr\{i\in L_r\} = \prod_{k=1}^r \Pr\{i\in L_k\mid i\in L_{k-1}\} .\]
 
    Perform a relabelling of indices so that, for all $j\in\Z$,
-   $Y_j=\cw^j_{L_{r-1}}(i)$. Consider the graph $G'$ described above and
-   define the random variable $M_0$ as follows:  If no component of $G'$
-   contains $i$ (because $X_i=Y_0<t_r$) then define $M_0=0$.  Otherwise,
-   let $C_0$ be the component of $G'$ that contains $i$ and let $M_0$
-   be the number of vertices in $C_0$.
+   $Y_j=\cw^j_{L_{r-1}}(i)$. Consider the graph $G_{\ge t}$ described
+   above and define the random variable $M_0$ as follows:  If no component
+   of $G_{\ge t}$ contains $i$ (because $X_i=Y_0<t_r$) then define $M_0=0$.
+   Otherwise, let $C_0$ be the component of $G'$ that contains $i$
+   and let $M_0$ be the number of vertices in $C_0$.
 
    First note that $\Pr\{M_0=0\}=\Pr\{X_i<t_r\}=1/2$.
    For $m \in \N$, 
@@ -323,31 +353,36 @@ A_r\} \ge \Pr\{i\in L_r\}=1/4$ and we immediately obtain our lower bound:
 \end{cor}
 
 
-\section{A Sharper Lower Bound}
+\subsection{A Sharper Lower Bound: Dredging the Lakes}
 
 Next we derive a sharper lower bound using refinements of ideas
 from the previous section.
 
-Let $L$ be an $X$-safe set such that $\langle X_i: i\in L\rangle$ is iid where
-each element has distribution $\mathcal{D}$.  Again, let $G=(L,E)$ be the
-graph with vertex set $L$ and edge set $E=\{(i,\cw_L(i)): i\in L\}$.
-Fix a value $0<p<1$ and let $t=t(\mathcal{D},p)$ be chosen so that, for each $i\in L$,
-$\Pr\{X_i\ge t\} = p$.  Consider the graph $G_{\ge t}$ induced the
-elements in $L_{\ge t}$ and consider the graph $G_{<t}$ induced by the
-elements in $L\setminus L_{\ge t}$.
+Let $L$ be an $X$-safe set such that $\langle X_i: i\in L\rangle$ is iid
+where each element has distribution $\mathcal{D}$.  Again, let $G=(L,E)$
+be the graph with vertex set $L$ and edge set $E=\{(i,\cw_L(i)): i\in
+L\}$.  Fix a value $0<p<1$ and let $t=t(\mathcal{D},p)$ be chosen so that,
+for each $i\in L$, $\Pr\{X_i\ge t\} = p$.  Consider the graph $G_{\ge
+t}$ of $G$ induced the elements in $L_{\ge t}$ and consider the subgraph
+$G_{<t}$ of $G$ induced by the elements in $L\setminus L_{\ge t}$.
 
-Now, each component $C$ of $G_{<t}$ is a path $v_1,\ldots,v_k$.  For each
-such component, we take the set 
+We call the components of $G_{<t}$ \emph{lakes}.  Each lake $C$ of
+$G_{<t}$ is a path $v_1,\ldots,v_k$.  For each such lake, we take the set
 \[ 
     \hat{C}_t=\{v_j : j\in\{2,\ldots,k-1\},\, X_{v_j}=\max\{X_{v_{j-1}},X_{v_j},X_{v_{j+1}}\}\} \enspace .
 \]
-That is, $\hat{C}$ are the indices of the internal local maxima in the
-sequence $X_{v_1},\ldots,X_{v_k}$.  Let $\hat{F}_t(L)$ be the union of
-$\hat{C}_t$ over all components $C$ in $G_{<t}$.
+That is, $\hat{C}_t$ are the indices of the internal local maxima,
+called \emph{seamounts} in the sequence $X_{v_1},\ldots,X_{v_k}$.
+Let $\hat{F}_t(L)$ be the union of $\hat{C}_t$ over all components $C$
+in $G_{<t}$.
 
 Let $Q_t(L)= F_t(L)\cup \hat{F}_t(L)$. It is straightforward to verify
 that $Q_t(L)$ is $X$-safe.  However, the sequence $\langle X_i: i\in
-Q_t(L)\rangle$ is certainly not iid.  
+Q_t(L)\rangle$ is certainly not iid.  Each mountain produces exactly one
+peak (in $F_t(L)$), while each lake may produce zero or more seamounts.
+
+The following lemma quantifies the probability that a mountain peak
+($i$) is immediately followed by another mountain peak $\cw_{Q_t(L)}(i)$.
 
 \begin{lem}\lemlabel{empty-lake}
   Select $t$ so that $\Pr\{X_i\ge t\}=p$.  Then,
@@ -359,25 +394,26 @@ Q_t(L)\rangle$ is certainly not iid.
 \end{lem}
 
 \begin{proof}
-   The event we are studying occurs when $\hat{F}_t(L)$ contains
-   no elements in the interval $[i,\cw_{F_t(L)}(i)]$.  Now, we know
-   that there is at least one element $j$ in this interval with $X_j
-   < t$.  Therefore $G_{<t}$ contains a component $C$ whose vertices
-   $v_1,\ldots,v_m$ are in this interval. The component $C$ does not
-   contribute any element to $\hat{F}_t(L)$ if and only if the sequence
-   $X_{v_1},\ldots,X_{v_m}$ has no local maxima except possibly $X_{v_1}$
-   and $X_{v_m}$. 
+   The event we are studying occurs when $\hat{F}_t(L)$ contains no
+   elements in the interval $[i,\cw_{F_t(L)}(i)]$.  Now, we know that
+   there is at least one element $j$ in this interval with $X_j < t$.
+   Therefore $G_{<t}$ contains a lake $C$ with vertices $v_1,\ldots,v_m$
+   such that $i<v_1<\cdots<v_m<\cw_{F_t(L)}(i)$. The component $C$
+   does not contribute any element to $\hat{F}_t(L)$ if and only if the
+   sequence $X_{v_1},\ldots,X_{v_m}$ has no local maxima except possibly
+   $X_{v_1}$ and $X_{v_m}$.
 
    Since $X_{v_1},\ldots,X_{v_m}$ is iid, the probability that it contains
    no local maxima is equal to the number of permutations with no local
    maxima divided by $m!$.  A straightforward counting argument using
    the binomial identity $\sum_{k=0}^{m-1}\binom{m-1}{k}=2^{m-1}$ shows
    that the number of permutations with no local maxima is $2^{m-1}$
-   (see OEIS entry A059204 and references therein, for example \cite{X}).
+   (see OEIS entry A059204 and references therein \cite{X}).
 
-   Now, the size of the component $C$ (i.e., the value of $m$)
-   is also a random variable whose distribution is given by
-   $\Pr\{|C|=m\}=(1-p)^{m-1}p$.  Letting $\mathcal{E}_C$ denote the event ``$C$  contributes at least one elements to $\hat{F}_t(L)$'', we have
+   Now, the size of the lake $C$ (i.e., the value of
+   $m$) has a geometric distribution given by
+   $\Pr\{|C|=m\}=(1-p)^{m-1}p$.  Letting $\mathcal{E}_C$ denote the event
+   ``$C$  contributes at least one elements to $\hat{F}_t(L)$'', we have
    \[
        \Pr\{\mathcal{E}_C\} = \sum_{m=3}^\infty \Pr\{|C|=m\}\Pr\{\mathcal{E}_C\mid |C|=m\} = \sum_{m=3}^\infty (1-p)^{m-1}p\left(1-\frac{2^{m-1}}{m!}\right) \enspace . \qedhere
    \]
