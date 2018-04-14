@@ -245,11 +245,12 @@ is straightforward to verify that the set
 is also an $X$-safe set. Indeed, for any $i\in L_{P}$, there exists a $j\in\{i,\ldots,\cw{L_P}(i)-1\}$ such that $X_i=\max\{X_i,\ldots,X_j\}$ and $X_{\cw{L_P}(i)}=\max\{X_{j+1},\ldots,X_{\cw_{L_P}(i)}\}$
 
 \paragraph{Thresholded Franklin:}
-Consider the graph $G=(L,E)$ where $E=\{(i,\cw_L(i)): i\in L\}$. Remove
-from $G$ all vertices $i\in L$ such that $X_i < t$ to obtain a graph
-$G_{\ge t}$ that has a set $P$ of connected components.  We call each
-connected component of $G_{\ge t}$ a \emph{mountain}.  Now consider the
-\emph{$t$-thresholded Franklin function}
+Define the graph $G=G(L)$ that has vertex set $L$ and edge set where
+$\{(i,\cw_L(i)): i\in L\}$. Remove from $G$ all vertices $i\in L$
+such that $X_i < t$ to obtain a graph $G_{\ge t}$ that has a set $P$
+of connected components.  We call each connected component of $G_{\ge
+t}$ a \emph{mountain}.  Now consider the \emph{$t$-thresholded Franklin
+function}
 \[
     F_t(L) = \bigcup_{M\in P} \argmax_{i\in V(M)}(X_i) \enspace ,
 \]
@@ -419,17 +420,64 @@ The following lemma quantifies the probability that a mountain peak
    \]
 \end{proof}
 
-Note that, using the identity $\sum_{k=0}^\infty a^k/(k!)=e^a-1$, one can derive a closed form for the probability in \lemref{empty-lake}:
+Note that, using the identity $\sum_{k=0}^\infty a^k/(k!)=e^a-1$, one
+can derive a closed form for the probability in \lemref{empty-lake}:
 \[
 q = 
 1-\frac{p e^{2(1-p)} + p - 2}{2 \, {\left(p - 1\right)}}
 \]
 (See the accompanying Sage workbook.)
 
-\begin{lem}
-  Let $t$ be chosen as in \lemref{empty-lake}. For any $i\in L$, $\Pr\{i\in F_t(Q_t(L))\}= (p-p^2)(1-q)$ and the sequence $\langle X_i:i\in F_t(Q_t(L))\rangle$ is iid.
+\begin{lem}\lemlabel{lower-bound-ii}
+  Let $t$ be chosen as in \lemref{empty-lake}. For any $i\in L$,
+  $\Pr\{i\in F_t(Q_t(L))\}= (1/2)(2p-p^{2}(1+e^{2-2p}))$ and the sequence 
+  $\langle X_i:i\in F_t(Q_t(L))\rangle$ is iid.
 \end{lem}
 
+\begin{proof}
+  First note that $i\in F_t(L)$ is a necessary condition for $i\in F_t(Q_t(L))$.
+  Mimicing the calculation in the proof of \lemref{lower-bound}, we
+  find that, for any $i\in L$, $\Pr\{i\in F_t(L)\}=p-p^2$.
+
+  Let $L'=Q_t(L)$.  Now, for any integer $j$ we have 
+  \[
+    \Pr\{X_{\cw_{L'}(j)} \ge t\mid j\in F_t(L)\} = 
+    \Pr\{\cw_{L'}(j)\in F_t(L)\} = q \enspace .
+  \]
+  Let $G=G(L')$, condition on $i\in F_t(L)$ and observe that $i$ is part of a mountain $M$ in $L'$.  This mountain has size $a+1+b$ where $a$ counts the number of elements smaller than $i$ and $b$ counts the number of elements greater than $i$.  The distribution of the size of this mountain is given by
+  \[
+     \Pr\{|M|=m\mid i\in F_t(L)\}\sum_{a=0}^{m-1} q^{a}(1-q)q^b(1-q) = m q^{m-1}(1-q)^2 \enspace .
+  \]
+  Now, conditional on $i\in F_t(L)$, $i\in F_t(Q_t(L))$ if and only if $i=\max\{X_j: j\in V(M)\}$. The sequence $\langle X_j: j\in V(M)\rangle$ is iid because is a contiguous subsequence of $\langle X_j:j\in F_t(L)\rangle$, which is iid by \lemref{iid}.  In particular, this implies that 
+  \[
+    \Pr\{i=\max\{X_j: j\in V(M)\}\mid |M|=m \} = 1/m \enspace .
+  \]
+  Putting everything together, we obtain
+  \begin{align*}
+    \Pr\{i \in F_t(Q_t(L))\} 
+       & = \Pr\{i\in F_t(L)\}\cdot \Pr\{i\in F_t(Q_t(L))\mid i \in F_t(L)\} \\
+       & = (p-p^2)\sum_{m=1}^\infty (1/m)\Pr\{|M|=m\mid \mid i \in F_t(L)\} \\
+       & = (p-p^2)\sum_{m=1}^\infty q^{m-1}(1-q)^2 \\
+       & = (p-p^2)\sum_{m=1}^\infty q^{m-1}(1-q)^2 \\
+       & = (p-p^2)(1-q) \\ 
+       & = \frac{1}{2} \left(2p-p^{2}(1+e^{2-2p}) \right) \enspace .
+  \end{align*}
+\end{proof}
+
+Optimizing over $p$, we find that the probability
+in \lemref{lower-bound-ii} this function has a global
+maximum at $p=-(1/2)W(-2/e^2)$, where $W$ is the Lambert
+$W$-function\footnote{$W(z)=x$ where $x$ is the unique solution to $xe^x
+= z$.} For this value of $p$, 
+\[
+c_1 = -\frac{1}{8} \, {\left(e^{\operatorname{W}(-2/e^2) + 2} + 1\right)} \operatorname{W}(-2/e^2)^{2} - \frac{1}{2} \operatorname{W}(-2/e^2)
+>
+0.0809512797364893
+\]
+
+\begin{thm}
+   For any $k\in\N$, $p_{k} \ge \sqrt{c_1}^k > 0.284519384^k$.
+\end{thm}
 
 %\begin{lem}\lemlabel{magic}
 %   Let $p=5/2-\sqrt{21/4}$, let $t^*$ be chosen so that $\Pr\{X\ge t^*\}=p$, 
