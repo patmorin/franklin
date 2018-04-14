@@ -280,7 +280,7 @@ bound $A_r=F^r(\Z)$
 
    The fact that $i\not\in A_r$ implies that $X_i
    < \max\{X_{\cw_{A_{r-1}}(i)},X_{\ccw_{A_{r-1}}(i)}\}$.
-   Suppose, without loss of generality, that $X_i < X_{\cw{A_{r-1}}(i)}$.
+   Suppose, without loss of generality, that $X_i < X_{\cw_{A_{r-1}}(i)}$.
    Now, since $i\in L_r$, it must be that $X_i
    \ge X_{\cw{L_{r-1}}(i)}$.  But, since $L_{r-1}$ is
    $X$-safe, this contradicts \lemref{domination} and the assumption that
@@ -299,8 +299,8 @@ i\in F^r(\Z)\rangle$.
 \begin{proof}
   If $\mathcal{D}$ is the distribution of $X_i$ for each $i\in
   L$ and $p=\Pr\{X_i\ge t\}$, then each $X_j$ with $j\in F_t(L)$
-  is distributed like $\max\{A_1,\ldots,A_R\}$ where where $R$ is a
-  $\mathrm{geometric}(p)$ random variable and each $A_i$ is an independent
+  is distributed like $\max\{Z_1,\ldots,Z_R\}$ where where $R$ is a
+  $\mathrm{geometric}(p)$ random variable and each $Z_i$ is an independent
   random variable with distribution $\mathcal{D}$.
 \end{proof}
 
@@ -378,15 +378,30 @@ Let $\hat{F}_t(L)$ be the union of $\hat{C}_t$ over all components $C$
 in $G_{<t}$.
 
 Let $Q_t(L)= F_t(L)\cup \hat{F}_t(L)$. It is straightforward to verify
-that $Q_t(L)$ is $X$-safe.  However, the sequence $\langle X_i: i\in
-Q_t(L)\rangle$ is certainly not iid.  Each mountain produces exactly one
-peak (in $F_t(L)$), while each lake may produce zero or more seamounts.
+that $Q_t(L)$ is $X$-safe.  As with $F_t$ define $Q_{t_1,\ldots,t_r}=
+Q_{t_k}(\cdots(Q_{t_1}(L))\cdots)$.  The same type of argument used to prove
+\lemref{lower-domination} establishes the following result.
 
-The following lemma quantifies the probability that a mountain peak
-($i$) is immediately followed by another mountain peak $\cw_{Q_t(L)}(i)$.
+\begin{lem}\lemlabel{lower-domination-ii}
+   For any integer $r\ge 0$ and any $t_1,\ldots,t_r$,
+   \[  Q_{t_1,\ldots,t_r}(\Z) \subseteq F^{r}(\Z)   \]
+\end{lem}
+
+To continue the line of reasoning in the previous section, we would like
+to prove that the sequence $\langle X_i: i\in Q_t(L)\rangle$ is iid.
+Unfortunately, it is not.  Each mountain produces exactly one peak
+(in $F_t(L)$), while each lake may produce zero or more seamounts.
+The result is that seamounts tend to cluster together.
+
+In what follows, it is helpful to keep this lake/mountain view in
+mind. Between every two consecutive mountain peaks (elements of $F_t(L)$)
+there is exactly one lake which may or may not contain one or more
+seamounts (elements of $\hat{F}_t(L)$.  The following lemma quantifies
+the probability that a mountain peak ($i\in F_t(L)$) is immediately
+followed by another mountain peak $\cw_{Q_t(L)}(i)$.
 
 \begin{lem}\lemlabel{empty-lake}
-  Select $t$ so that $\Pr\{X_i\ge t\}=p$.  Then,
+  Let $0<p<1$ and select $t$ so that $\Pr\{X_i\ge t\}=p$.  Then,
   for any $i\in F_t(L)$, 
   \[
     \Pr\{\cw_{Q_t(L)}(i) = \cw_{F_t(L)}(i)\} =  
@@ -395,14 +410,14 @@ The following lemma quantifies the probability that a mountain peak
 \end{lem}
 
 \begin{proof}
-   The event we are studying occurs when $\hat{F}_t(L)$ contains no
-   elements in the interval $[i,\cw_{F_t(L)}(i)]$.  Now, we know that
-   there is at least one element $j$ in this interval with $X_j < t$.
-   Therefore $G_{<t}$ contains a lake $C$ with vertices $v_1,\ldots,v_m$
-   such that $i<v_1<\cdots<v_m<\cw_{F_t(L)}(i)$. The component $C$
-   does not contribute any element to $\hat{F}_t(L)$ if and only if the
-   sequence $X_{v_1},\ldots,X_{v_m}$ has no local maxima except possibly
-   $X_{v_1}$ and $X_{v_m}$.
+   The event $\cw_{Q_t(L)}(i) = \cw_{F_t(L)}(i)$ occurs precisely
+   when $\hat{F}_t(L)$ contains no elements in the interval
+   $[i,\cw_{F_t(L)}(i)]$.  We know that there is exactly one lake in
+   this interval $C$ in this interval.  Let $C$'s vertices be vertices
+   $v_1,\ldots,v_m$ such that $i<v_1<\cdots<v_m<\cw_{F_t(L)}(i)$. The
+   lake $C$ does not contribute any element to $\hat{F}_t(L)$ if and
+   only if the sequence $X_{v_1},\ldots,X_{v_m}$ has no local maxima
+   except possibly $X_{v_1}$ and $X_{v_m}$.
 
    Since $X_{v_1},\ldots,X_{v_m}$ is iid, the probability that it contains
    no local maxima is equal to the number of permutations with no local
@@ -411,17 +426,20 @@ The following lemma quantifies the probability that a mountain peak
    that the number of permutations with no local maxima is $2^{m-1}$
    (see OEIS entry A059204 and references therein \cite{X}).
 
-   Now, the size of the lake $C$ (i.e., the value of
-   $m$) has a geometric distribution given by
-   $\Pr\{|C|=m\}=(1-p)^{m-1}p$.  Letting $\mathcal{E}_C$ denote the event
-   ``$C$  contributes at least one elements to $\hat{F}_t(L)$'', we have
+   Now, the size of the lake $C$ (i.e., the value of $m$) has a
+   geometric distribution given by $\Pr\{|C|=m\}=(1-p)^{m-1}p$.
+   Letting $\mathcal{E}_C$ denote the event ``$C$  contributes at least
+   one elements to $\hat{F}_t(L)$'', we have
    \[
-       \Pr\{\mathcal{E}_C\} = \sum_{m=3}^\infty \Pr\{|C|=m\}\Pr\{\mathcal{E}_C\mid |C|=m\} = \sum_{m=3}^\infty (1-p)^{m-1}p\left(1-\frac{2^{m-1}}{m!}\right) \enspace . \qedhere
+     \Pr\{\mathcal{E}_C\} 
+        = \sum_{m=3}^\infty \Pr\{|C|=m\}\Pr\{\mathcal{E}_C\mid |C|=m\} 
+        = \sum_{m=3}^\infty (1-p)^{m-1}p\left(1-\frac{2^{m-1}}{m!}\right) 
+           \enspace . \qedhere
    \]
 \end{proof}
 
 Note that, using the identity $\sum_{k=0}^\infty a^k/(k!)=e^a-1$, one
-can derive a closed form for the probability in \lemref{empty-lake}:
+can derive a closed form for the probability, $q$, in \lemref{empty-lake}:
 \[
 q = 
 1-\frac{p e^{2(1-p)} + p - 2}{2 \, {\left(p - 1\right)}}
@@ -430,7 +448,10 @@ q =
 
 \begin{lem}\lemlabel{lower-bound-ii}
   Let $t$ be chosen as in \lemref{empty-lake}. For any $i\in L$,
-  $\Pr\{i\in F_t(Q_t(L))\}= (1/2)(2p-p^{2}(1+e^{2-2p}))$ and the sequence 
+  \[ 
+       \Pr\{i\in F_t(Q_t(L))\}= (1/2)(2p-p^{2}(1+e^{2-2p}))
+  \]
+  and the sequence 
   $\langle X_i:i\in F_t(Q_t(L))\rangle$ is iid.
 \end{lem}
 
@@ -462,22 +483,35 @@ q =
        & = (p-p^2)(1-q) \\ 
        & = \frac{1}{2} \left(2p-p^{2}(1+e^{2-2p}) \right) \enspace .
   \end{align*}
+
+  To see that $\langle X_i:i\in F_t(Q_t(L))\rangle$ is iid, observe
+  that we can obtain an identically distributed sequence by selecting,
+  for each $i$, a $\operatorname{geometric}(q)$ random variable $m$
+  and setting $X_i=\max\{Z_1,\ldots,Z_m\}$ where $Z_1,\ldots,Z_m$ are
+  iid and distributed like the the elements of $\{X_j:j\in F_t(L)\}$.
 \end{proof}
 
-Optimizing over $p$, we find that the probability
-in \lemref{lower-bound-ii} this function has a global
-maximum at $p=-(1/2)W(-2/e^2)$, where $W$ is the Lambert
-$W$-function\footnote{$W(z)=x$ where $x$ is the unique solution to $xe^x
-= z$.} For this value of $p$, 
+Optimizing over $p$, we find that the probability in
+\lemref{lower-bound-ii} has a global maximum at $p=-(1/2)W(-2/e^2)$,
+where $W$ is the Lambert $W$-function\footnote{$W(z)=x$ where $x$ is
+the unique solution to $xe^x = z$.} For this value of $p$,
 \[
-c_1 = -\frac{1}{8} \, {\left(e^{\operatorname{W}(-2/e^2) + 2} + 1\right)} \operatorname{W}(-2/e^2)^{2} - \frac{1}{2} \operatorname{W}(-2/e^2)
+c_1 = -{\left(e^{{W}(-2/e^2) + 2} + 1\right)} {W}(-2/e^2)^{2}/8 - {W}(-2/e^2)/2
 >
 0.0809512797364893
 \]
 
 \begin{thm}
-   For any $k\in\N$, $p_{k} \ge \sqrt{c_1}^k > 0.284519384^k$.
+   For any $k\in\N$, $p_{k} \ge c_1^{k/2} > 0.284519384^k$.
 \end{thm}
+
+\begin{proof}
+  For even $k$, this follows immediately from $k/2$ applications of
+  \lemref{lower-bound-ii}. For odd $k$, it follows $\lfloor k/2\rfloor$
+  applications of \lemref{lower-bound-ii} followed by the trivial bound,
+  on the resulting iid sequence, which shows that 
+  $p_{k}\ge c_1^{(k-1)/2}/3 > c_1^{k/2}$.
+\end{proof}
 
 %\begin{lem}\lemlabel{magic}
 %   Let $p=5/2-\sqrt{21/4}$, let $t^*$ be chosen so that $\Pr\{X\ge t^*\}=p$, 
