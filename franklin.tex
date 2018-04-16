@@ -258,7 +258,7 @@ which keeps the highest \emph{peak} in each mountain.
 Note that, for any $t\in\R$, $F_t(L)$ is $X$-safe, since it can be
 written as $F_t(L) = (L_{\ge t})_P$.
 
-We will perform a sequence of thresholded Franlin functions
+We will perform a sequence of thresholded Franklin functions
 beginning with $\Z$.  For any non-negative integer $r$ and any
 real values $t_1,\ldots,t_r$, define $F_{t_1,\ldots,t_r}(L) =
 F_{t_r}(F_{t_{r-1}}(\cdots(F_{t_1}(\Z))\cdots ))$.  The following lemma
@@ -508,9 +508,9 @@ c_1 = -{\left(e^{{W}(-2/e^2) + 2} + 1\right)} {W}(-2/e^2)^{2}/8 - {W}(-2/e^2)/2
 \begin{proof}
   For even $k$, this follows immediately from $k/2$ applications of
   \lemref{lower-bound-ii}. For odd $k$, it follows $\lfloor k/2\rfloor$
-  applications of \lemref{lower-bound-ii} followed by the trivial bound,
-  on the resulting iid sequence, which shows that 
-  $p_{k}\ge c_1^{(k-1)/2}/3 > c_1^{k/2}$.
+  applications of \lemref{lower-bound-ii} followed by the trivial bound on
+  the resulting iid sequence, which shows that $p_{k}\ge c_1^{(k-1)/2}/3
+  > c_1^{k/2}$.
 \end{proof}
 
 %\begin{lem}\lemlabel{magic}
@@ -563,10 +563,23 @@ c_1 = -{\left(e^{{W}(-2/e^2) + 2} + 1\right)} {W}(-2/e^2)^{2}/8 - {W}(-2/e^2)/2
 
 \section{The Upper Bound}
 
-For $S\subseteq\Z$ a \emph{blocking} of $S$ is a partition $B$ of $S$
-into sets of sizes 1 and 2 with the property that, if $\{i,j\}\in B$, then
-$j\in\{\cw_S(i),\ccw_S(i)\}$.  We define $S[B] = \{\min P : P\in B\}$.  
+In this section, we prove a modest upper bound, which shows that $p_k <
+c_2^k$ for some $c_2<1/2$. 
 
+For $S\subseteq\Z$ a \emph{blocking} of $S$ is a partition $B$ of $S$
+into ordered sets (tuples) of sizes 1 and 2 with the property that,
+if $(i,i')\in B$, then $i'=\cw_S(i)$.  Note that this implies that
+there is a natural total ordering on blocks in which we say that $I<J$
+if $\max(I)<\min(J)$.  In a blocking $B$, there are three types of
+\emph{blocks} $I\in B$ that we consider:
+\begin{enumerate}
+\item \emph{singleton blocks} $I$ in which $|I|=1$;
+\item \emph{increasing blocks} $(i,i')$ in which $X_{i'} > X_{i}$; and
+\item \emph{decreasing blocks} $(i,i')$ in which $X_{i'} < X_{i}$.
+\end{enumerate}
+
+For a blocking, $B$, of $S$ and a block $I\in B$, we use the notation
+$\succ_B(I)=\min\{J\in B: I < J\}$.
 
 \section{Remarks}
 
