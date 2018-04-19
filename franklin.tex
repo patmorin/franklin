@@ -565,24 +565,24 @@ c_1 = -{\left(e^{{W}(-2/e^2) + 2} + 1\right)} {W}(-2/e^2)^{2}/8 - {W}(-2/e^2)/2
 \section{The Upper Bound}
 
 In this section, we prove a modest upper bound, which shows that $p_k <
-c_2^k$ for some $c_2<1/2$. 
+c_2^k$ for some $c_2\approx 0.479966765528$. 
 
-For $S\subseteq\Z$ a \emph{blocking} of $S$ is a partition $B$ of $S$ into
-ordered sets of sizes 1 and 2, called \emph{blocks}, with the property
-that, if $(i,i')\in B$, then $i'=\cw_S(i)$.  Note that this implies that
-there is a natural total order $\prec_B$ on the blocks of a blocking
-where a block $I\in B$ precedes a block $J\in B$ if $\max(I)<\min(J)$.
+For an integer set $S\subseteq\Z$ a \emph{blocking} of $S$ is a partition
+$B$ of $S$ into ordered sets of sizes 1 and 2, called \emph{blocks},
+with the property that, if $(i,i')\in B$, then $i'=\cw_S(i)$.  Note that
+this implies that there is a natural total order $\prec_B$ on the
+blocks of a blocking $I\prec_B J$ if and only if $\max(I)<\min(J)$.
 
 For a blocking, $B$, of $S$ and a block $I\in B$, we use the notation
-$\cw_B(I)=\min\{J\in B: I \prec_B J\}$ where $\min$ is defined with
+$\cw_B(I)=\min\{J\in B: I \prec_B J\}$ where the minimum is defined with
 respect to the order $\prec_B$.  The sequence $\langle I: I\in B\rangle$ is the (doubly-infinite) sequence in which, for all $I\in B$, $I$ immediately precedes $\cw_B(I)$.
 
 We define a function $R$ that takes a blocking $B$ of $S$ and produces
 another blocking $R(B)$.  Let $B_0$ be the block of $B$ that contains
-$\min\{S\cap \N\}$. We partition $B$ into groups of consectuive blocks
+$\min\{S\cap \N\}$. We partition $B$ into groups of consecutive blocks
 in a greedy fashion as follows:  We consider the Starting with a group
 $G_0$ that contains $B_0$ we repeatedly add the \ldots Observe that, if the
-sequence $\langle I:I\in B\rangle$ of blocks is idd, then the resulting
+sequence $\langle I:I\in B\rangle$ of blocks is iid, then the resulting
 sequence of groups is iid.
 
 Now, each group contains two or three blocks which contain a total
@@ -596,31 +596,81 @@ the resulting sequence of blocks $\langle I: I\in R(B)\rangle$ is iid.
 Now, we are interested in the fraction of the integers in $\cup B$
 that make it into $R(B)$.  Let $q_i$, for $i\in\{1,2\}$, denote the
 probability that a block in $R(B)$ contains $i$ integers and let $p_{i}$,
-$i\in\{3,4\}$ denote the probability that a group in $B$ cotains $i$
+$i\in\{3,4\}$ denote the probability that a group in $B$ contains $i$
 integers. Then the quantity of interest is
 \[
     \alpha = \frac{q_1+2q_2}{3p_3 + 4p_4} \enspace .
 \]
+The numerator in this expression represents the ``size'' of $R(B)$ while the denominator represents the ``size'' of $B$.
 
-In a blocking $B$, there are three types of
-\emph{blocks} $I\in B$ that we consider:
-\begin{enumerate}[label=\alph*)]
+In a blocking $B$, we classify blocks into three types:
+\begin{enumerate}[label=$\alph*$:]
 \item \emph{increasing blocks} $(i,i')$ in which $X_{i'} > X_{i}$; 
 \item \emph{decreasing blocks} $(i,i')$ in which $X_{i'} < X_{i}$; and
 \item \emph{singleton blocks} $(i)$ of size 1.
 \end{enumerate}
 
-We assume that each of these three block types occurs with probability
-$a$, $b$, and $c=1-a-b$ respectively.  From this, we can deduce that
+\begin{figure}
+  \begin{center}
+  \begin{tabular}{c@{\hspace{.6cm}}c@{\hspace{.6cm}}c@{\hspace{.6cm}}c@{\hspace{.6cm}}c}
+     \includegraphics[scale=.625]{figs/c3} &
+     \includegraphics[scale=.625]{figs/ac} &
+     \includegraphics[scale=.625]{figs/ca} &
+     \includegraphics[scale=.625]{figs/bc} &
+     \includegraphics[scale=.625]{figs/cb} \\
+     $c^3$ & $ac$ & $ca$ & $bc$ & $cb$ \\[.6cm]
+  \end{tabular}
+
+  \begin{tabular}{c@{\hspace{.6cm}}c@{\hspace{.6cm}}c@{\hspace{.6cm}}c@{\hspace{.6cm}}c@{\hspace{.6cm}}c}
+     \includegraphics[scale=.625]{figs/a2} &
+     \includegraphics[scale=.625]{figs/ab} &
+     \includegraphics[scale=.625]{figs/ba} &
+     \includegraphics[scale=.625]{figs/b2} &
+     \includegraphics[scale=.625]{figs/c2a} &
+     \includegraphics[scale=.625]{figs/c2b} \\
+     $a^2$ & $ab$ & $ba$ & $b^2$ & $c^2a$ & $c^2b$ 
+  \end{tabular}
+  \end{center}
+  \caption{The 11 types of groups}
+  \figlabel{groups}
+\end{figure}
+We call these $a$-blocks, $b$-blocks, and $c$-blocks, respectively and
+assume that the blocks of $B$ are iid and distributed so that 
+each of these three block types occurs with probability
+$a$, $b$, and $c=1-a-b$ respectively.   
+
+These three types of blocks give rise to 11 types of groups, illustrated
+in \figref{groups}. We name these groups by reading off the block types
+that form the group from left to right so that, for example, a $ba$-group
+is a $b$-block followed by an $a$-block.  This naming scheme is
+convenient because the name of the group also gives the probability of
+the group.
+
+From this, we can deduce that
 \[
     p_3 = c^3 + ac + ca + bc + cb
 \]
 and
 \[
-    p_4 = a^2 + ab + ba + b^2 \enspace .
+    p_4 = a^2 + ab + ba + b^2 + c^2a + c^2b \enspace .
 \]
-Note that an $ab$-group always produces a block of size 1 and a $ba$ group
-always produces a group of size 2.  A $c^3$-group produces a block of size
+
+Each $ab$-, $ac$-, and $cb$-group always produces a block of size 1.
+Each $ba$-group always produces a block of size 1.
+
+
+
+
+The following group types always produce a block of size 1: $ab$, $ac$,
+and $bc$.  Every
+
+
+Note that an $ab$-group always produces a block of size 1 and a $ba$-group
+always produces a group of size 2.  
+A $ac$-group always produces a block of size 1.
+
+
+A $c^3$-group produces a block of size
 2 with probability $1/3$ and a block of size 1 with probability $2/3$.
 Using symmetry we can argue that conditional on a group being $ac$ or $ca$, it produces a block of size 1 or 2 each with probability $1/2$.
 A $c^2b$-group produces a block of size 1 or 2 each with probability $1/2$.
@@ -636,12 +686,14 @@ and
 \[
     q_2 = c^3/3 + ac + bc + ba + c^2b - w + a^2 - x + b^2 -y+ c^2a-z
 \]
-Note that this is still insufficient to prove an upper bound $\alpha
-< 1/2$. In particular, setting $a = 1$ and $b=w=x=y=z=c=0$, we obtain
-a value $\alpha=1/2$.  Instead, we have to
-analyze two consecutive application of $R$.  
 
-Observe that
+Unfortunately, all of this is still insufficient to prove an upper
+bound $\alpha < 1/2$. In particular, setting $a=1$ or $b=1$ and all
+other variables to 0, yields $q_2=1$ and $p_4 = 1$, and $\alpha=1/2$.
+However, this is the only way to obtain a
+value of $\alpha = 1/2$.  
+In particular, if the product $ab$ is non-zero,
+then $\alpha$ is strictly less than $1/2$:
 \begin{align*}
   \alpha & = \frac{q_1+2q_2}{3p_3 + 4p_4} \\
      & = \frac
@@ -664,25 +716,42 @@ Observe that
         \frac{ab}{4}
 \end{align*}
 
-Finally, letting 
+Again, we can study two consecutive rounds.  Recall that, by definition,
+with probability $a^2-x$ a group is an $a^2$-group that generates a
+block of size 2.  The key observation is that, by symmetry, the resulting
+block is equally likely to an $a$-block or a $b$-block.
+Similarly, with probability $b^2-x$ a group is a $b^2$-group that generates a block of size 2 that is equally likely to be an $a$-block or $b$-block.
+Finally, with probability $c^3/3$, a group is a $c^3$-group that generates a block of size 2 that is equally likely to be an $a$-block or a $b$-block.
+Letting $a'$, $b'$ and $c'=1-a'-b'$ denote the probabilities of $a$-, $b$-, and $c$-blocks in $R(B)$ we have
+\[
+   a',b' \ge (1/2)(a^2-x+b^2-y+c^3/3)  \enspace .
+\]  
+and, in particular, the product $a'b' \ge ((1/2)(a^2-x+b^2-y+c^3/3))^2$.
 
-
-
- There are two types of special groups were are interested in:
-
-\begin{enumerate}
-   \item three singletons 
-   \item an increasing block followed by a decreasing block, which occurs with probability $ab$;
-   \item a 
-\end{enumerate}
-
-We assume that the input blocks are iid.  In particular, we assume that if singleton blocks occur with probability $a$
+Finally, letting $q_1'$ and $q_2'$ denote the probabilities that a block
+of $R(R(B))$ has size 1 or 2 and define 
+\[
+    \alpha' = \frac{q'_1+2q'_2}{3p_3 + 4p_4}
+\]
+\begin{align*}
+    \alpha' & = \frac{q'_1+2q'_2}{3p_3 + 4p_4} \\
+            & \le \left(\frac{1}{2}-\frac{a'b'}{4}\right)
+               \left(\frac{q_1+2q_2}{3p_3+4p_4} \right) \\
+            & \le \left(\frac{1}{2}-\frac{((1/2)(a^2-x+b^2-y+c^3/3))^2}{4}\right)
+               \left(\frac{q_1+2q_2}{3p_3+4p_4} \right) \\
+        & =\left(\frac{1}{2}-\frac{((1/2)(a^2-x+b^2-y+c^3/3))^2}{4}\right)
+        \left(\frac
+        {4c^3/3 + 3ac + 3bc + 3ab + 2c^2b -w + 2a^2 - x + 2b^2 - y + 2c^2a -z}
+        {3c^3 + 6ac + 6bc + 8ab + 4a^2 + 4c^2b + 4a^2 + 4b^2 + 4c^2a}\right) \\
+%
+%
+\end{align*}
 
 
 \section{Remarks}
 
 \bibliographystyle{plainurl}
-\bibliography{anagram}
+\bibliography{franklin}
 
 \end{document}
 
