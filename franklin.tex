@@ -134,7 +134,7 @@ The initial set $A_0$ of active nodes is defined to be $A_0=\Z$ and, at round $r
                                       X_{\cw_{A_{r-1}}(i)}\} \} 
 \] 
 We study the probability $p_r$ that, for some particular $i\in\Z$,
-$i\in A_r$.  Intuitively, one would expect that $p_r=1/3^r$, but the
+$i\in A_r$.  Intuitively, one would expect that $p_r=1/3^r$, but
 we know that this is not even true for $r=2$.  Relaxing this, we might
 hope to prove that $\lim_{r\to\infty} p_r^{1/r} = c$ for some $c$ close
 to $1/3$.  However, \emph{apriori}, it is not obvious that this limit
@@ -143,16 +143,17 @@ exists and, if it does, it may be as large as $1/2$ or as small as $0$.
 Here we establish the following upper and lower bounds on $p_r$:
 
 \begin{thm}
-   $A^r \le p_r \le B^r$.
+   $c_1^r \le p_r \le c_2^r$, where 
+   $c_1=0.284519384$ and $c_2= 0.49369977332$.
 \end{thm}
 
 We have not been able to establish the existence of the limit
 $\lim_{r\to\infty} p_r^{1/r}$ but this result shows that, if
-$\lim_{r\to\infty} p_r^{1/r}=c$, then $0 < A \le c\le  B < 1/2$.
+$\lim_{r\to\infty} p_r^{1/r}=c$, then $0 < c_1 \le c\le  c_2 < 1/2$.
 
 In terms of the number of rounds required by Franklin's algorithm on
 a finite ring, these results establish that the expected number of
-rounds is at most $\log_{1/B} n + o(\log n)$ and at least $\log_{1/A}
+rounds is at most $\log_{1/{c_2}} n + o(\log n)$ and at least $\log_{1/{c_1}}
 n- o(\log n)$.  In particular, these results rule out the possibility
 that the expected number of rounds is $o(\log n)$.
 
@@ -184,15 +185,15 @@ if, for every $i\in S$ and
     \max\{X_i,\cw_S(i)\} = \max\{X_m: m\in \{i,\ldots,\cw_S(i)\}\} \enspace .
 \]
 
-See \figref{domination-i}.
-\begin{figure}
-   \begin{center}
-      \includegraphics{figs/domination-i}
-   \end{center}
-   \caption{Illustration of \lemref{domination}.}
-   \figlabel{domination-i}
-\end{figure}
-
+%See \figref{domination-i}.
+%\begin{figure}
+%   \begin{center}
+%      \includegraphics{figs/domination-i}
+%   \end{center}
+%   \caption{Illustration of \lemref{domination}.}
+%   \figlabel{domination-i}
+%\end{figure}
+%
 \begin{lem}\lemlabel{domination}
    Let $L\subseteq U\subseteq\Z$ be sets of integers where $L$
    is $X$-safe.  If $i\in L\cap U$ and $X_{\cw_U(i)} > X_i$, then
@@ -593,15 +594,16 @@ $X_{i_1},\ldots,X_{i_z}$.  Note that, since the sequence of groups is iid
 and the block output for a group depends only the contents of the group,
 the resulting sequence of blocks $\langle I: I\in R(B)\rangle$ is iid.
 
-Now, we are interested in the fraction of the integers in $\cup B$
+We are interested in the fraction of the integers in $\cup B$
 that make it into $R(B)$.  Let $q_i$, for $i\in\{1,2\}$, denote the
 probability that a block in $R(B)$ contains $i$ integers and let $p_{i}$,
 $i\in\{3,4\}$ denote the probability that a group in $B$ contains $i$
-integers. Then the quantity of interest is
+integers. The quantity of interest is
 \[
     \alpha = \frac{q_1+2q_2}{3p_3 + 4p_4} \enspace .
 \]
-The numerator in this expression represents the ``size'' of $R(B)$ while the denominator represents the ``size'' of $B$.
+The numerator in this expression represents the ``size'' of $R(B)$
+while the denominator represents the ``size'' of $B$.
 
 In a blocking $B$, we classify blocks into three types:
 \begin{enumerate}[label=$\alph*$:]
@@ -674,13 +676,15 @@ $q_1$ and $q_2$:
    q_2 = c^3/3 + ba + ca + bc + a^2 + b^2 + c^2a + c^2b
          - x_{ca} - x_{bc} - x_{a^2} - x_{b^2} - x_{c^2a} - x_{c^2b}
 \]
-Unfortunately, all of this is still insufficient to prove an upper
-bound $\alpha < 1/2$. In particular, setting $a=1$ or $b=1$ and all
-other variables to 0, yields $q_1=p_3=0$, $q_2=p_4 = 1$, and $\alpha=1/2$.
-However, this is the only way to obtain a
-value of $\alpha = 1/2$.  
-In particular, if the product $ab$ is non-zero,
-then $\alpha$ is strictly less than $1/2$:
+%Unfortunately, all of this is still insufficient to prove an upper
+%bound $\alpha < 1/2$. In particular, setting $a=1$ or $b=1$ and all
+%other variables to 0, yields $q_1=p_3=0$, $q_2=p_4 = 1$, and $\alpha=1/2$.
+%However, this is the only way to obtain a
+%value of $\alpha = 1/2$.  
+%In particular, if the product $ab$ is non-zero,
+%then $\alpha$ is strictly less than $1/2$:
+Define $x=x_{ca} + x_{bc} + x_{a^2} + x_{b^2} + x_{c^2a} + x_{c^2b}$.
+The following upper bound on $\alpha$ is helpful:
 \begin{align}
   \alpha & = \frac{q_1+2q_2}{3p_3 + 4p_4} \nonumber \\
 %     & = \frac
@@ -690,58 +694,62 @@ then $\alpha$ is strictly less than $1/2$:
 %         }
 %        {3c^3 + 6ac + 6bc + 8ab + 4a^2 + 4c^2b + 4a^2 + 4b^2 + 4c^2a} \\
      & = \frac
-        { 4c^3/3 + 3ab + 3ac + 3bc + 2a^2 + 2b^2 + 2c^2a + 2c^2b 
-        - x_{ca} - x_{bc} - x_{a^2} - x_{b^2} - x_{c^2a} - x_{c^2b}}
+        { 4c^3/3 + 3ab + 3ac + 3bc + 2a^2 + 2b^2 + 2c^2a + 2c^2b - x}
         {3c^3 + 8ab + 6ac + 6bc + 4a^2 + 4b^2 + 4c^2a + 4c^2b} \eqlabel{clear} \\
-     & \le \frac
-        { 4c^3/3 + 3ab + 3ac + 3bc + 2a^2 + 2b^2 + 2c^2a + 2c^2b }
+     & = \frac{1}{2}- 
+        \frac{c^3/6 + ab + x}
         {3c^3 + 8ab + 6ac + 6bc + 4a^2 + 4b^2 + 4c^2a + 4c^2b} \nonumber \\
      & = \frac{1}{2}- 
-        \frac{c^3/6 + ab}
-        {3c^3 + 8ab + 6ac + 6bc + 4a^2 + 4b^2 + 4c^2a + 4c^2b} \nonumber \\
-     & = \frac{1}{2}- 
-        \frac{c^3/6 + ab}{3q_3 + 4q_4} \nonumber \\
+        \frac{c^3/6 + ab + x}{3q_3 + 4q_4} \nonumber \\
      & \le \frac{1}{2}- 
-        \frac{c^3/6 + ab}{4q_3 + 4q_4} \nonumber \\
+        \frac{c^3/6 + ab + x}{4q_3 + 4q_4} \nonumber \\
      & = \frac{1}{2}- 
-        \frac{c^3/6 + ab}{4} \nonumber
+        \frac{c^3/6 + ab + x}{4} \nonumber
 \end{align}
 
 Thus, we have a situation in which $\alpha$ can be very close $1/2$
-if and only if $ab$ is very small.  Next we show that 
+if and only if $ab$, $c$, and $x$ are all very close to zero.  Since
+$a+b+c=1$, this can only happen if one of $a$ or $b$ is close to one
+and the remaining variables are close to zero.  Indeed, setting $a=1$
+or $b=1$ and all other variables to 0, yields $q_1=p_3=0$, $q_2=p_4 =
+1$, and $\alpha=1/2$.
 
-Again, we can study two consecutive rounds.  Recall that, by definition,
-with probability $a^2-x_{a^2}$ a group is an $a^2$-group that generates a
-block of size 2.  The key observation is that, by symmetry, the resulting
-block is equally likely to an $a$-block or a $b$-block.
-Similarly, with probability $b^2-x_{b^2}$ a group is a $b^2$-group that generates a block of size 2 that is equally likely to be an $a$-block or $b$-block.
-Finally, with probability $c^3/3$, a group is a $c^3$-group that generates a block of size 2 that is equally likely to be an $a$-block or a $b$-block.
-Letting $a'$, $b'$ and $c'=1-a'-b'=q_1$ denote the probabilities of $a$-, $b$-, and $c$-blocks in $R(B)$ we have
+To overcome this, we again study two consecutive rounds.  Recall that, by
+definition, with probability $a^2-x_{a^2}$ a group is an $a^2$-group that
+generates a block of size 2.  The key observation is that, by symmetry,
+the resulting block is equally likely to an $a$-block or a $b$-block.
+Similarly, with probability $b^2-x_{b^2}$ a group is a $b^2$-group
+that generates a block of size 2 that is equally likely to be an
+$a$-block or $b$-block.  Finally, with probability $c^3/3$, a group is
+a $c^3$-group that generates a block of size 2 that is equally likely to
+be an $a$-block or a $b$-block.  Letting $a'$, $b'$ and $c'=1-a'-b'=q_1$
+denote the probabilities of $a$-, $b$-, and $c$-blocks in $R(B)$ we have
 \[
-   a',b' \ge (1/2)(a^2-x_{a^2}+b^2-x_{b^2}+c^3/3)  \enspace .
+   a',b' \ge (1/2)(a^2-x_{a^2}+b^2-x_{b^2}+c^3/3)\ge (1/2)(a^2+b^2+c^3/3-x)  \enspace .
 \]  
-and, in particular, the product $a'b' \ge ((1/2)(a^2-x_{a^2}+b^2-x_{b^2}+c^3/3))^2$.
 
 
-Finally, letting $q_1'$ and $q_2'$ denote the probabilities that a block
-of $R(R(B))$ has size 1 or 2 and define 
+Finally, let $q_1'$ and $q_2'$ denote the probabilities that a block
+of $R(R(B))$ has size 1 and 2, respectively, and define 
 \[
     \alpha' = \frac{q'_1+2q'_2}{3p_3 + 4p_4} \enspace .
 \]
+TODO: Fix this!
 \begin{align}
-    \alpha' & = \frac{q'_1+2q'_2}{3p_3 + 4p_4} \\
-            & \le \left(\frac{1}{2}-\frac{(c')^3/6 + a'b'}{4}\right)
+    \alpha'(a,b,x) & = \frac{q'_1+2q'_2}{3p_3 + 4p_4} \\
+            & \le \left(\frac{1}{2}-\frac{(c')^3/6+a'b'}{4}\right)
                \left(\frac{q_1+2q_2}{3p_3+4p_4} \right) \\
-            & = \left(\frac{1}{2}-\frac{q_1^3/6 + a'b'}{4}\right)
-               \left(\frac{q_1+2q_2}{3p_3+4p_4} \right) \\
-            & \le \left(\frac{1}{2}-\frac{q_1^3/6 + (1/2)(a^2-x_{a^2}+b^2-x_{b^2}+c^3/3)}{4}\right)
-               \left(\frac{q_1+2q_2}{3p_3+4p_4} \right) \eqlabel{ap} \\
+            & \le \left(\frac{1}{2}-\frac{q_1^3/6+(1/4)(a^2 + b^2 + c^3/3)^2}{4}\right)
+               \left(\frac{q_1+2q_2}{3p_3+4p_4} \right) 
+               \eqlabel{ap} 
 \end{align}
-This last expression is a function of 8 variables $a$, $b$, $x_{a^2}$,
-$x_{b^2}$, $x_{ca}$, $x_{bc}$, $x_{c^2a}$, $x_{c^2b}$.  It is clear
-from \eqref{clear} that \eqref{ap} is maximized when $x_{ca} = x_{bc}
-=x_{c^2a}= x_{c^2b}=0$.
+This last expression is a function of 3 variables $a$, $b$ and $x$.
+Maximizing this function over all $(a,b,x)\in[0,1]^3$ yields two global
+maxima at $(\gamma,0,0)$ and $(0,\gamma,0)$ with $\gamma\approx0.547757022207$ and for which $\alpha(\gamma,0,0)=c_2$ with $c_2\approx 0.243739466166$. (The actual values of $\gamma$ and $\beta$ are each roots of degree 14 polynomials with integer coefficients---see the accompanying Sage worksheet.)
 
+\begin{thm}
+   For any $k\in\N$, $p_{k} \le c_2^{k/2} \le 0.49369977332^k$.
+\end{thm}
 
 \section{Remarks}
 
